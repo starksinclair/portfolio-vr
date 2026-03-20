@@ -1,0 +1,451 @@
+[
+  {
+    "id": "eng104",
+    "title": "ENG104 MONSTER",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["React", "jsPDF"],
+    "description": "Explore Monster Evolution Through Media: This interactive timeline, created for my English 104 class, traces the portrayal of monsters in popular culture from their earliest appearances. See how these mythical creatures have been depicted over time and how media representations have evolved. (Responsive web design)",
+    "challenges": [
+      "Finding resources and free images to use in this project.",
+      "I had a lot of images, which made the site slow.",
+      "I was looking for a way to generate a PDF file from the quiz results."
+    ],
+    "solutions": [
+      "During research, I found Wikimedia, which offers free images, and I used it to find images for my project.",
+      "I found Imgbb, a free hosting platform for images.",
+      "I used jsPDF, an npm package, to generate a PDF file from the quiz results."
+    ],
+    "status": "Finished",
+    "externalLink": "https://eng104monster.netlify.app",
+    "link": "/works/eng104",
+    "thumbnail": "https://i.ibb.co/gZc447VZ/ENG104-Monster.png",
+    "userStories": [
+      "As a user, I want to explore the evolution of monsters in media.",
+      "As a user, I want to interact with the timeline.",
+      "As a user, I want to learn about different monster representations.",
+      "As a user, I want to see the timeline in a visually appealing way.",
+      "As a user, I want to take a quiz to reinforce my understanding after exploring the content."
+    ]
+  },
+  {
+    "id": "corpstube",
+    "title": "Corpstube",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["React", "Node.js", "API Integration"],
+    "description": "Corpstube: This custom video streaming platform, designed for Ball State University's Digital Corps, displays videos uploaded by the Digital Corps employees. (Responsive web design)",
+    "challenges": [
+      "I had a lot of prop drilling, which made the logic look complex, and I didn't know how to fix it.",
+      "I had issues with re-rendering the new comments and likes on the video page after a user liked or commented on a video.",
+      "I didn't know how to display the video page when a user clicked on the video thumbnail on the home page because I was used to making a new HTML file to display another page, but React does things differently."
+    ],
+    "solutions": [
+      "I discussed it with my mentor, and he told me about React Context, which I could use to pass around data.",
+      "I used the useEffect hook and added the comments and likes state to the dependency array to re-render the new comments and likes on the video page after a user liked or commented on a video.",
+      "After asking around, I used the useParams hook to get the video ID from the URL and used it to fetch the video data from the API."
+    ],
+    "status": "Finished",
+    "externalLink": "https://corptube.netlify.app",
+    "link": "/works/corpstube",
+    "thumbnail": "https://i.ibb.co/VcZPb1St/Corpstube.png",
+    "userStories": [
+      "As a user, I want to easily access videos.",
+      "As a user, I want to search for specific content.",
+      "As a user, I want to sort videos by date, either from newest to oldest or from oldest to newest.",
+      "As a user, I want to provide feedback on the content."
+    ]
+  },
+  {
+    "id": "corpsify",
+    "title": "Corpsify",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["React", "API Integration"],
+    "description": "Corpsify is a web application that allows users to search for sounds. It provides a user-friendly interface for searching sounds, making it easy to find the perfect sound for any project. The app is built using React and integrates with an external API to fetch sound data.",
+    "challenges": [
+      "This was my first time using an API.",
+      "This was also my first time using React.",
+      "Making an API call in React without calling the API multiple times.",
+      "Didn't understand response status codes.",
+      "Had lots of bugs and dependency issues from using create-react-app."
+    ],
+    "solutions": [
+      "I read the documentation on how to use the API very thoroughly.",
+      "Watched a ton of videos on how to use React, and read the documentation.",
+      "Used the useEffect hook to make the API call only once, and used the useState hook to store the data.",
+      "Read and watched a lot of videos on what response status codes really mean.",
+      "I discussed the bugs I was facing with my peers and mentors, and they suggested using Vite instead of create-react-app in my future projects as create-react-app was getting deprecated."
+    ],
+    "status": "Finished",
+    "externalLink": "https://corpsify.vercel.app",
+    "link": "/works/corpsify",
+    "thumbnail": "https://i.ibb.co/MDCT4fM1/corpsify.png",
+    "userStories": [
+      "As a user, I want to search for sounds easily.",
+      "As a user, I want to listen to sounds before downloading.",
+      "As a user, I want to download sounds.",
+      "As a user, I want to add sounds to a playlist.",
+      "As a user, I want to view my playlist.",
+      "As a user, I want to be able to view the download count, created date, and rating of the sound."
+    ]
+  },
+  {
+    "id": "saintly",
+    "title": "Saintly",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
+    "description": "Saintly: My First Steps in Web Development: This freelancing website marks my step into the world of web development. It served as a valuable learning experience as I explored the fundamentals of building web applications.",
+    "challenges": [
+      "Structuring a scalable layout.",
+      "I had a lot of duplicated code, and I didn't know how to make it reusable, like having a product card component.",
+      "I had issues with utilizing carousels and sliders.",
+      "I didn't know about many CSS properties and how to use them."
+    ],
+    "solutions": [
+      "Used Bootstrap for responsiveness.",
+      "I had no solution for the duplicated code, but I learned how to make reusable components in my next projects when I used React, which made me appreciate a tool like React.",
+      "I used Bootstrap carousels and sliders, and I learned how to use them properly by reading the docs on W3Schools and watching a ton of videos on YouTube.",
+      "I read the documentation on W3Schools and MDN Web Docs to learn about CSS properties and how to use them."
+    ],
+    "status": "Finished",
+    "externalLink": null,
+    "link": "/works/saintly",
+    "thumbnail": "https://i.ibb.co/4RhpMT6Z/Saintly.png",
+    "userStories": [
+      "As a user, I want to view the services offered.",
+      "As a user, I want to contact the service provider.",
+      "As a user, I want to view testimonials and ratings of a freelancer.",
+      "As a user, I want to view the portfolio of a freelancer.",
+      "As a user, I want to view the about us page.",
+      "As a user, I want to view the pricing page easily."
+    ]
+  },
+  {
+    "id": "sinchat",
+    "title": "Sinchat",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["HTML", "CSS", "JavaScript"],
+    "description": "Engage in Playful Conversation with Sinchat: This interactive chat application utilizes if/else statements to generate fun and unexpected responses to your prompts. Inspired by my Java class, Sinchat is a testament to the power of code to create engaging experiences.",
+    "challenges": [
+      "I had a lot of challenges with the logic of the chatbot, like if I should use the user's input to return a response.",
+      "I had issues with implementing dark mode since it was my first time doing it."
+    ],
+    "solutions": [
+      "So, I stopped overthinking and remembered my aim was to send random responses irrespective of what the user entered. I used a random number generator with a maximum length of my responses to return a random response from the object (key: value) of responses.",
+      "I used a static solution for dark mode, which was an onclick event: if the body is light, then turn to dark. This method doesn't account for users who have their device set to dark mode, which can result in a bad user experience. But I learned how to use CSS variables and media queries in my next projects."
+    ],
+    "status": "Finished",
+    "externalLink": "https://sinchats.netlify.app",
+    "link": "/works/sinchat",
+    "thumbnail": "https://i.ibb.co/fYYFWSRd/Sinchat.png",
+    "userStories": [
+      "As a user, I want to have fun conversations with the chatbot.",
+      "As a user, I want to see the chatbot's responses in real-time.",
+      "As a user, I want to be able to toggle light/dark mode.",
+      "As a user, I want to be able to reset the chat history."
+    ]
+  },
+  {
+    "id": "poma",
+    "title": "Poma",
+    "category": "OTHER TECHNOLOGIES",
+    "technologies": ["WordPress", "PHP", "React"],
+    "description": "Poma: I developed a custom WordPress CMS to streamline content management for clients and a plugin to seamlessly integrate content into the live site via API endpoints, which helped reduce manual intervention, resulting in a more dynamic and user-friendly platform. I also worked on the frontend using React to create a responsive and interactive user interface.",
+    "challenges": [
+      "I knew nothing about WordPress and PHP.",
+      "I didn't know how to query the database to get the data I needed.",
+      "I wrote a lot of bad code due to the quick deadline for this project.",
+      "I didn't know how to use Git properly; there were a lot of merge conflicts, a bad Git history, and I wrote bad commit messages because I didn't know there was a strict method of writing commit messages."
+    ],
+    "solutions": [
+      "I sat down with a senior developer to learn the basics of WordPress and how to create a custom CMS. He also gave me his huge PHP book to read, which helped me understand the basics of PHP.",
+      "I read the WordPress documentation and asked a lot of questions of the senior developer, and I was able to learn and use the WordPress REST API to query the database and get the data I needed.",
+      "Luckily for me, my team lead was able to help me refactor my code and also sat down with me to discuss and enlighten me further on best code practices.",
+      "I read the Git documentation and watched a lot of videos on how to use Git properly, and I was able to learn how to write good commit messages."
+    ],
+    "status": "Finished",
+    "externalLink": "https://poma.apsoprojects.org/",
+    "link": "/works/poma",
+    "thumbnail": "https://i.ibb.co/WNJkGMLQ/poma.png",
+    "userStories": [
+      "As a user, I want to easily add new content.",
+      "As a user, I want to easily edit or delete content.",
+      "As a user, I want to view content in a responsive layout.",
+      "As a user, I want to have a seamless experience between the CMS and the live site."
+    ]
+  },
+  {
+    "id": "pantry",
+    "title": "Pantry Vision",
+    "category": "FULL STACK DEVELOPMENT",
+    "technologies": ["Next.js", "Firebase", "Tailwind CSS", "Gemini API"],
+    "description": "Pantry Vision: Developed a pantry management app with AI features, enabling users to track food items, label them with expiration dates, and generate recipes. Integrated camera functionality for easy input, with a Firebase backend and Next.js frontend.",
+    "challenges": [
+      "I knew nothing about Next.js.",
+      "I wanted a way to store the food items in a database that wouldn't cost me anything.",
+      "I didn't know where to store my Gemini API key because it was in my .env and I can't push that to GitHub even though it was on a private repo.",
+      "I didn't know how to use the Gemini API.",
+      "Implementing camera-based input.",
+      "I needed a way to style the app faster and easier.",
+      "I was totally lost on how to perform complex queries using the Firebase Firestore API."
+    ],
+    "solutions": [
+      "Learned Next.js through documentation and tutorials.",
+      "After long research, I found out about Firebase Firestore, which is a NoSQL database that is free to use.",
+      "I used GitHub secrets to store my Gemini API key and used it in my Next.js app.",
+      "I read the Gemini API documentation, and I also used the Gemini chatbot for situations where I was confused.",
+      "Used the HTML5 camera to get the file, and then used the FileReader API to read the file and convert it to a base64 string, which I then used to query the AI for results.",
+      "I used Tailwind CSS to style the app, which made it easier and faster to style the app.",
+      "I read the Firebase Firestore documentation and watched a lot of videos on how to use the Firestore API to perform complex queries."
+    ],
+    "status": "Finished",
+    "externalLink": "https://pantryvision.vercel.app",
+    "link": "/works/pantry",
+    "thumbnail": "https://i.ibb.co/yBGzSPVh/pantry-vision.png",
+    "userStories": [
+      "As a user, I want to scan food items using my camera.",
+      "As a user, I want to receive recipe suggestions based on scanned items.",
+      "As a user, I want to track expiration dates of food items.",
+      "As a user, I want to manage my pantry inventory easily.",
+      "As a user, I want to be able to save my AI-generated recipes.",
+      "As a user, I want to be able to register and log in to my account using normal methods or Google details.",
+      "As a user, I want to be able to view nutrition information of the food items using AI."
+    ]
+  },
+  {
+    "id": "allcentury",
+    "title": "All Century Voting",
+    "category": "FULL STACK DEVELOPMENT",
+    "technologies": ["Firebase", "Node.js", "Vue.js"],
+    "description": "All Century Voting: I designed the database architecture, implementing vote validation, voting logic, and integrating Firebase for real-time data synchronization.",
+    "challenges": [
+      "I had issues understanding the codebase, because this was my first time working on a Vue codebase.",
+      "Real-time updates."
+    ],
+    "solutions": [
+      "I read the documentation and sat down with my team lead to understand the codebase and learn how things were similar in both React and Vue, which helped me understand quickly.",
+      "Implemented Firestore triggers."
+    ],
+    "status": "Finished",
+    "externalLink": "https://digitalcorps.s3.amazonaws.com/all-century-voting/dist/index.html",
+    "link": "/works/allcentury",
+    "thumbnail": "https://i.ibb.co/Y7NWLVVJ/all-century-voting.png",
+    "userStories": [
+      "As a user, I want to be able to keep track of my votes.",
+      "As a user, I want to be able to see the votes of other users.",
+      "As a user, I want the vote count of a player to be updated in real-time."
+    ]
+  },
+  {
+    "id": "orientation",
+    "title": "Orientation Map",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["HTML", "Leaflet.js", "CSS", "JQuery"],
+    "description": "I collaborated with the design and UX teams to develop an interactive orientation map for incoming Ball State freshmen. My primary responsibilities included data collection and map development.",
+    "challenges": [
+      "I was looking for a way to display the map that wouldn't cost anything.",
+      "I was given a map image layout to use, and I had to figure out how to place markers on this map that represent the actual locations of the buildings.",
+      "I had an issue trying to get a user's live location on the image map, which I didn't know how to do."
+    ],
+    "solutions": [
+      "I found Leaflet.js, which is an open-source JavaScript library for mobile-friendly interactive maps.",
+      "I used the image map feature of Leaflet.js after reading the docs, which allowed me to define the longitude and latitude of the markers on the map image, and then used the Leaflet.js API to place the markers on the map.",
+      "I tried a lot of math formulas for this by using the JavaScript Geolocation API, but I couldn't get it to work. This wasn't a requirement for the project, but I thought it would be cool if I was able to figure it out."
+    ],
+    "status": "Finished",
+    "externalLink": null,
+    "link": "/works/orientation",
+    "thumbnail": "https://i.ibb.co/cXYd9nch/orientation-map.png",
+    "userStories": [
+      "As a user, I want to easily navigate the campus.",
+      "As a user, I want to find specific buildings or locations.",
+      "As a user, I want to view additional information about each location.",
+      "As a user, I want to be able to zoom in and out of the map."
+    ]
+  },
+  {
+    "id": "cs200",
+    "title": "CS200 - Digital Privacy Explorer",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["Twine", "JavaScript"],
+    "description": "Digital Privacy Explorer is an interactive web-based project designed to educate users about the concept of digital fingerprints. The project introduces users to the concept of a 'digital fingerprint,' how it is created, how it is used for tracking, privacy laws, and which data is being collected during account creation.",
+    "challenges": [
+      "I didn't want to use the Twine default story format, so I had to figure out how to change the story format.",
+      "Visualizing data privacy concepts.",
+      "I wanted the website to play a labyrinth sound when the user is on the page, but the browser kept blocking it."
+    ],
+    "solutions": [
+      "I read the docs on Twine, and I was able to change it to the Snowman story format, which is for people who already know JavaScript and CSS.",
+      "Used interactive UI components.",
+      "I realized that the sound was being blocked because it was being played automatically, which is against the rules, so I added a button to play the sound when the user clicks on it."
+    ],
+    "status": "Finished",
+    "externalLink": "https://starksinclair.github.io/cs200_final_project/",
+    "link": "/works/cs200",
+    "thumbnail": "https://i.ibb.co/Pzrkp607/CS200.png",
+    "userStories": [
+      "As a user, I want to learn about digital fingerprints.",
+      "As a user, I want to understand how my data is being used.",
+      "As a user, I want to explore the implications of digital privacy.",
+      "As a user, I want to interact with the content in an engaging way."
+    ]
+  },
+  {
+    "id": "wheeloflife",
+    "title": "Wheel of Life App",
+    "category": "FULL STACK DEVELOPMENT",
+    "technologies": [
+      "Next.js",
+      "Firebase",
+      "Tailwind CSS",
+      "Chart.js",
+      "Clerk Security"
+    ],
+    "description": "A mindfulness and self-improvement app that allows users to assess and track their progress in different life areas through an interactive chart.",
+    "challenges": [
+      "I faced mostly teammate challenges because this was a remote team project with teammates from different time zones.",
+      "Dynamic chart rendering."
+    ],
+    "solutions": [
+      "We were able to set meeting hours and ensure that this meeting time worked for everyone's schedule.",
+      "Used Chart.js."
+    ],
+    "status": "On Hold",
+    "externalLink": "https://wheel-of-life-livid.vercel.app/",
+    "link": "/works/wheeloflife",
+    "thumbnail": "https://i.ibb.co/GQG9ddzk/wheel-of-life.png",
+    "userStories": [
+      "As a user, I want to assess my life areas.",
+      "As a user, I want to track my progress over time.",
+      "As a user, I want to set goals for each life area.",
+      "As a user, I want to visualize my progress in an interactive way."
+    ]
+  },
+  {
+    "id": "schoolflow",
+    "title": "School Flow",
+    "category": "FRONTEND DEVELOPMENT",
+    "technologies": ["React", "TypeScript", "Redux"],
+    "description": "A high school management software that streamlines administrative and academic workflows.",
+    "challenges": [
+      "I needed to change the file extension of the files from .jsx to .tsx because I was migrating the project from JavaScript to TypeScript.",
+      "The project had a huge codebase, and I was having issues understanding it."
+    ],
+    "solutions": [
+      "I used a Python script to change the file extension of the files from .jsx to .tsx, which made my life easier.",
+      "I just sat down and worked through the logic, reusable components, and the state management of the project, and I was able to understand the codebase."
+    ],
+    "status": "In Progress",
+    "externalLink": null,
+    "link": "/works/schoolflow",
+    "thumbnail": "https://i.ibb.co/7xXCvBP4/school-flow.png",
+    "userStories": [
+      "As a user, I want to manage student records.",
+      "As a user, I want to view students' results.",
+      "As a user, I want to generate students' results.",
+      "As a user, I want to communicate with parents."
+    ]
+  },
+  {
+    "id": "neybank",
+    "title": "Ney Bank",
+    "category": "FULL STACK DEVELOPMENT",
+    "technologies": ["Next.js", "Clerk Security", "PostgreSQL", "Prisma ORM"],
+    "description": "A fintech app for managing different savings and checking accounts, investment portfolios, and allowing money transfers between accounts at different banks.",
+    "challenges": [
+      "I wanted a way to have a database that would be free to use.",
+      "I needed an ORM to help me manage the database and make it easier to query the database, so I decided to use Prisma, which I knew nothing about.",
+      "I wanted a way to connect the banks' API to the app, so that users can transfer money between accounts at different banks."
+    ],
+    "solutions": [
+      "I found out about SQLite, which is a free database that is easy to use and set up, after discussing it with a fellow developer.",
+      "I read the Prisma documentation, and I was able to learn how to use Prisma very quickly because it was similar to Adonis Lucid, which I am familiar with, and the concepts are the same.",
+      "I discovered the Plaid API, which was very costly because I wanted to make this project public, so I had to put the project on hold."
+    ],
+    "status": "On Hold",
+    "externalLink": null,
+    "link": "/works/neybank",
+    "thumbnail": "https://i.ibb.co/Z1p34G3g/ney-bank.png",
+    "userStories": [
+      "As a user, I want to manage my savings and checking accounts.",
+      "As a user, I want to view my investment portfolio.",
+      "As a user, I want to transfer money between accounts at different banks.",
+      "As a user, I want to view my transaction history."
+    ]
+  },
+  {
+    "id": "adminmoderation",
+    "title": "Admin Moderation System",
+    "category": "FULL STACK DEVELOPMENT",
+    "challenges": [
+      "Integrating secure Single Sign-On (SSO) with Duo for admin authentication.",
+      "Designing a flexible, auditable moderation workflow for multiple content types (users, listings, services).",
+      "Ensuring real-time updates and filtering for admin actions and reports.",
+      "Maintaining a clear audit trail of all moderation activities.",
+      "Learning the AdonisJS framework and Edge templating system quickly to deliver production-ready features."
+    ],
+    "description": "Naahia Admin Moderation System: I architected and implemented a secure, full-featured admin dashboard for content moderation. The system supports reviewing, resolving, and dismissing user-generated reports, with a complete audit trail of all admin actions. Access is protected by Duo SSO, ensuring only authorized admins can perform moderation tasks. The dashboard features real-time filtering, analytics, and a modern, responsive UI.",
+    "externalLink": null,
+    "link": "/works/adminmoderation",
+    "solutions": [
+      "Read and watched alot of videos on the OIDC protcols and deep dive into a lot of Github repos trying to figure out how to use the npm package for implementing OIDC in a node app. ",
+      "Designed a normalized database schema for tracking reports, admin actions, and audit logs.",
+      "Implemented real-time filtering and analytics for moderation actions using Edge and Tailwind CSS.",
+      "Created a robust notification system to inform users of report status changes.",
+      "Developed a responsive, user-friendly interface for efficient moderation workflows."
+    ],
+    "status": "Finished",
+    "technologies": [
+      "AdonisJS",
+      "Node.js",
+      "Duo SSO",
+      "Tailwind CSS",
+      "Edge Templates",
+      "MySQL",
+      "SendGrid Email API"
+    ],
+    "thumbnail": "https://i.ibb.co/9mMzCXX5/moderation.png",
+    "userStories": [
+      "As an admin, I want to securely log in with SSO so that only authorized users can access moderation tools.",
+      "As an admin, I want to view, filter, and act on user reports in real-time.",
+      "As an admin, I want every moderation action to be tracked for audit and transparency.",
+      "As a user, I want to be notified when my report is reviewed, resolved, or dismissed."
+    ]
+  },
+  {
+    "id": "healthconnect",
+    "title": "HealthConnect: Multi-Agent Medical QA System",
+    "category": "FULL STACK DEVELOPMENT",
+    "challenges": [
+      "Understanding the Model Context Protocol (MCP) and its integration",
+      "Learning and using Python FastAPI for the backend",
+      "Parsing and handling PubMed search results in XML"
+    ],
+    "description": "HealthConnect is a web application that delivers accurate, reliable, and medically validated answers to user questions by leveraging a multi-agent Large Language Model (LLM) system. It integrates with Model Context Protocol (MCP) servers to perform comprehensive web and medical literature searches, ensuring responses are grounded in up-to-date and trustworthy information. The system features a FastAPI backend, real-time web and PubMed search, and a modern, responsive UI. Each user query is refined, researched, and validated by specialized LLM agents, ensuring trustworthy and well-formatted answers.",
+    "externalLink": "https://multi-llm-agent-system.onrender.com",
+    "link": "/works/healthconnect",
+    "solutions": [
+      "I solved this by reading the official documentation and watching YouTube tutorials to grasp how MCP orchestrates multi-agent workflows.",
+      "I addressed this by studying FastAPI docs and following video guides to implement robust API endpoints.",
+      "I researched how other projects parse PubMed XML data and watched relevant tutorials to implement reliable data extraction."
+    ],
+    "status": "Finished",
+    "technologies": [
+      "Python",
+      "FastAPI",
+      "Model Context Protocol (MCP)",
+      "OpenAI API",
+      "Google Gemini API",
+      "DeepSeek API",
+      "SerpAPI",
+      "PubMed/NCBI E-utilities",
+      "Tailwind CSS",
+      "Docker"
+    ],
+    "thumbnail": "https://i.ibb.co/ZRH3bbgJ/healthconnect.png",
+    "userStories": [
+      "As a user, I want to ask medical questions and receive accurate, up-to-date answers sourced from reputable literature and web search.",
+      "As a user, I want the system to clearly indicate that information is for educational purposes and not medical advice.",
+      "As a developer, I want the backend to be modular and extensible, supporting new LLM agents and search tools.",
+      "As a user, I want the interface to be responsive and easy to use on any device."
+    ]
+  }
+]

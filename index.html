@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lagos to Muncie and Back — The Builders Scholarship</title>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <link rel="prefetch" href="portfolio/portfolio.html" />
+    <link rel="prefetch" href="data.json" as="fetch" crossorigin="anonymous" />
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <div id="cloudTransition" class="cloud-transition" aria-hidden="true">
+      <div class="cloud cloud-a"></div>
+      <div class="cloud cloud-b"></div>
+      <div class="cloud cloud-c"></div>
+      <div class="cloud cloud-d"></div>
+      <div class="cloud cloud-e"></div>
+      <div class="cloud cloud-f"></div>
+      <div class="transition-copy">
+        <span>Crossing Into The Museum</span>
+      </div>
+    </div>
+
+    <script>
+      AFRAME.registerComponent("portal-interaction", {
+        schema: {
+          targetUrl: { type: "string", default: "portfolio/portfolio.html" },
+          transitionSelector: { type: "string", default: "#cloudTransition" },
+          ambientAudioSelector: { type: "string", default: "#ambientSound" },
+        },
+
+        init: function () {
+          const el = this.el;
+
+          this.isTransitioning = false;
+          this.cloudTransition = document.querySelector(
+            this.data.transitionSelector,
+          );
+          this.ambientAudio = document.querySelector(
+            this.data.ambientAudioSelector,
+          );
+
+          this.hitbox = el.querySelector("#portalHitbox");
+          this.borderPlane = el.querySelector("#portalBorderPlane");
+          this.corePlane = el.querySelector("#portalCorePlane");
+          this.imagePlane = el.querySelector("#portalImagePlane");
+
+          this.prefetchMuseum();
+
+          this.onMouseEnter = this.onMouseEnter.bind(this);
+          this.onMouseLeave = this.onMouseLeave.bind(this);
+          this.onClick = this.onClick.bind(this);
+
+          if (this.hitbox) {
+            this.hitbox.addEventListener("mouseenter", this.onMouseEnter);
+            this.hitbox.addEventListener("mouseleave", this.onMouseLeave);
+            this.hitbox.addEventListener("click", this.onClick);
+          }
+
+          el.addEventListener("click", this.onClick);
+        },
+
+        remove: function () {
+          if (this.hitbox) {
+            this.hitbox.removeEventListener("mouseenter", this.onMouseEnter);
+            this.hitbox.removeEventListener("mouseleave", this.onMouseLeave);
+            this.hitbox.removeEventListener("click", this.onClick);
+          }
+
+          this.el.removeEventListener("click", this.onClick);
+        },
+
+        prefetchMuseum: function () {
+          fetch(this.data.targetUrl, { credentials: "same-origin" }).catch(
+            () => {},
+          );
+          fetch("data.json", { credentials: "same-origin" }).catch(() => {});
+        },
+
+        onMouseEnter: function () {
+          this.syncPortalHover(true);
+        },
+
+        onMouseLeave: function () {
+          if (!this.isTransitioning) {
+            this.syncPortalHover(false);
+          }
+        },
+
+        onClick: function () {
+          this.activatePortal();
+        },
+
+        syncPortalHover: function (isHovered) {
+          this.el.setAttribute("scale", isHovered ? "1.06 1.06 1.06" : "1 1 1");
+
+          if (this.imagePlane) {
+            this.imagePlane.setAttribute(
+              "material",
+              "opacity",
+              isHovered ? 0.82 : 0,
+            );
+          }
+
+          if (this.corePlane) {
+            this.corePlane.setAttribute(
+              "material",
+              "emissiveIntensity",
+              isHovered ? 0.65 : 0.35,
+            );
+          }
+
+          if (this.borderPlane) {
+            this.borderPlane.setAttribute(
+              "material",
+              "emissiveIntensity",
+              isHovered ? 0.75 : 0.35,
+            );
+          }
+        },
+
+        fadeAmbientOut: function (duration = 900) {
+          if (!this.ambientAudio) {
+            return;
+          }
+
+          const startVolume = this.ambientAudio.volume || 0.3;
+          const startTime = performance.now();
+
+          const step = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            this.ambientAudio.volume = startVolume * (1 - progress);
+
+            if (progress < 1) {
+              requestAnimationFrame(step);
+              return;
+            }
+
+            this.ambientAudio.pause();
+          };
+
+          requestAnimationFrame(step);
+        },
+
+        activatePortal: function () {
+          if (this.isTransitioning) {
+            return;
+          }
+
+          this.isTransitioning = true;
+          this.syncPortalHover(true);
+          this.el.setAttribute("animation__float", "pause");
+
+          if (this.cloudTransition) {
+            this.cloudTransition.classList.add("is-active");
+          }
+
+          this.fadeAmbientOut();
+
+          setTimeout(() => {
+            window.location.href = this.data.targetUrl;
+          }, 3350);
+        },
+      });
+    </script>
+
+    <a-scene background="color: #020617" renderer="colorManagement: true">
+      <a-assets>
+        <img id="lagosPanorama" src="assets/images/sky1.jpg"  alt=""/>
+        <img
+          id="portalMuseumImage"
+          src="assets/images/lagos-close-detail.jpg"
+          crossorigin="anonymous"
+         alt=""/>
+        <audio
+          id="ambientSound"
+          src="assets/audio/ambient/dayOne.mp3"
+          preload="auto"
+          loop
+        ></audio>
+      </a-assets>
+
+      <a-sky src="#lagosPanorama"></a-sky>
+
+      <a-entity
+        id="ambientEntity"
+        sound="src: #ambientSound; autoplay: true; loop: true; volume: 0.3"
+      ></a-entity>
+
+      <a-light type="ambient" intensity="0.95" color="#d9efff"></a-light>
+      <a-light
+        type="directional"
+        intensity="0.55"
+        color="#9ad9ff"
+        position="-2 4 1"
+      ></a-light>
+
+      <a-entity
+        id="portalEntity"
+        portal-interaction="targetUrl: portfolio/portfolio.html"
+        position="0 2 -5"
+        animation__float="property: position; from: 0 2 -3.5; to: 0 2.08 -3.5; dur: 3400; easing: easeInOutSine; dir: alternate; loop: true"
+      >
+        <a-plane
+          id="portalBorderPlane"
+          width="1.8"
+          height="2.9"
+          position="0 0 0.02"
+          material="color: #9fe4ff; transparent: true; opacity: 0.12; emissive: #8fe8ff; emissiveIntensity: 0.35"
+        ></a-plane>
+
+        <a-plane
+          id="portalCorePlane"
+          width="1.46"
+          height="2.54"
+          position="0 0 0.05"
+          material="color: #081a2a; transparent: true; opacity: 0.32; emissive: #67e8f9; emissiveIntensity: 0.35"
+        ></a-plane>
+
+        <a-plane
+          id="portalImagePlane"
+          width="1.3"
+          height="2.35"
+          position="0 0 0.07"
+          material="src: #portalMuseumImage; shader: flat; transparent: true; opacity: 0; emissive: #cffafe; emissiveIntensity: 0.08"
+        ></a-plane>
+
+        <a-entity position="0 0 0.085" scale="1 1.28 1" rotation="0 0 0">
+          <a-entity
+            geometry="primitive: ring; radiusInner: 0.62; radiusOuter: 0.70"
+            material="color: #7dd3fc; transparent: true; opacity: 0.35; side: double"
+            animation__rippleScale1="property: scale; from: 0.92 0.92 0.92; to: 1.1 1.1 1.1; dur: 2800; easing: easeOutQuad; loop: true"
+            animation__rippleOpacity1="property: material.opacity; from: 0.35; to: 0; dur: 2800; easing: easeOutQuad; loop: true"
+          ></a-entity>
+
+          <a-entity
+            geometry="primitive: ring; radiusInner: 0.62; radiusOuter: 0.70"
+            material="color: #7dd3fc; transparent: true; opacity: 0.35; side: double"
+            animation__rippleScale2="property: scale; from: 0.92 0.92 0.92; to: 1.1 1.1 1.1; dur: 2800; easing: easeOutQuad; delay: 1200; loop: true"
+            animation__rippleOpacity2="property: material.opacity; from: 0.35; to: 0; dur: 2800; easing: easeOutQuad; delay: 1200; loop: true"
+          ></a-entity>
+        </a-entity>
+
+        <a-plane
+          id="portalHitbox"
+          class="clickable"
+          width="1.3"
+          height="2.35"
+          position="0 0 0.06"
+          material="transparent: true; opacity: 0.001"
+        ></a-plane>
+
+        <a-entity
+          id="portalLabel3d"
+          position="0 -1.85 0.12"
+          scale="1.4 1.4 1.4"
+        >
+          <a-text
+            value="Portfolio Museum"
+            position="0 0 0"
+            align="center"
+            color="#ecfeff"
+            width="2.9"
+            lineHeight="55"
+            material="emissive: #cffafe; emissiveIntensity: 0.6"
+            shader="msdf"
+            font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
+            font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
+          ></a-text>
+
+          <a-text
+            value="Enter Portal"
+            position="0 -0.38 0"
+            align="center"
+            color="#cffafe"
+            width="2.1"
+            lineHeight="55"
+            material="emissive: #cffafe; emissiveIntensity: 0.28"
+            shader="msdf"
+            font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
+            font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
+          ></a-text>
+        </a-entity>
+      </a-entity>
+
+      <a-entity id="rig" position="0 0 2">
+        <a-camera wasd-controls look-controls position="0 1.6 0">
+          <a-cursor
+            fuse="true"
+            fuse-timeout="1100"
+            color="#d4a24f"
+            raycaster="objects: .clickable"
+          ></a-cursor>
+        </a-camera>
+      </a-entity>
+      <a-entity
+        id="leftController"
+        laser-controls="hand: left"
+        raycaster="objects: .clickable; far: 12"
+        line="color: #cffafe; opacity: 0.85"
+      ></a-entity>
+
+      <a-entity
+        id="rightController"
+        laser-controls="hand: right"
+        raycaster="objects: .clickable; far: 12"
+        line="color: #cffafe; opacity: 0.85"
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>
