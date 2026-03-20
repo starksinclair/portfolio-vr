@@ -1,0 +1,167 @@
+{
+  "professional": {
+    "name": "Nzenwata Sinclair",
+    "title": "Full-Stack Developer & Creative Technologist",
+    "summary": "Passionate developer with expertise in web development, VR/3D experiences, and creative problem-solving. Specialized in React, Node.js, and immersive technologies with a focus on building engaging user experiences that bridge design and functionality.",
+    "location": "Muncie, Indiana"
+  },
+  "experience": [
+    {
+      "id": "corpstube",
+      "title": "Digital Corps Developer Intern",
+      "company": "Ball State University - Digital Corps",
+      "duration": "2024 - Present",
+      "description": "Built and maintained custom video streaming platform for university employees. Implemented full-stack features using React and Node.js with complex state management.",
+      "highlights": [
+        "Implemented React Context for state management, reducing prop drilling",
+        "Resolved complex re-rendering issues using useEffect hooks",
+        "Built dynamic video player with comment and like functionality",
+        "Created responsive design for multiple screen sizes"
+      ],
+      "technologies": ["React", "Node.js", "API Integration", "CSS"],
+      "position3d": { "x": 0, "y": 2.5, "z": 0 },
+      "color": "#7dd3fc"
+    },
+    {
+      "id": "corpsify",
+      "title": "Junior Web Developer",
+      "company": "Ball State University - Digital Corps",
+      "duration": "2023 - 2024",
+      "description": "Created Corpsify sound search application, my first significant React project. Learned API integration, state management, and debugging with professional mentorship.",
+      "highlights": [
+        "First experience with React and modern JavaScript frameworks",
+        "Implemented API integration with comprehensive error handling",
+        "Built search functionality with real-time filtering",
+        "Learned best practices from industry mentors"
+      ],
+      "technologies": ["React", "API Integration", "JavaScript", "CSS"],
+      "position3d": { "x": -2.5, "y": 2.5, "z": 0.5 },
+      "color": "#fbbf24"
+    },
+    {
+      "id": "saintly",
+      "title": "Freelance Web Developer",
+      "company": "Self-Employed",
+      "duration": "2022 - 2023",
+      "description": "First freelancing project building a website for service offerings. Foundation for understanding web structure, CSS properties, and component reusability.",
+      "highlights": [
+        "Developed responsive website layout from ground up",
+        "Learned CSS fundamentals and Bootstrap framework",
+        "Implemented carousel and slider functionality",
+        "Gained experience with scalable layout design"
+      ],
+      "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
+      "position3d": { "x": 2.5, "y": 2.5, "z": 0.5 },
+      "color": "#a78bfa"
+    }
+  ],
+  "education": [
+    {
+      "institution": "Ball State University",
+      "degree": "Bachelor of Science",
+      "field": "Computer Science",
+      "graduation": "Expected 2025",
+      "highlights": [
+        "Recipient of The Builders Scholarship",
+        "Participated in Digital Corps internship program",
+        "Focused on full-stack development and creative computing"
+      ],
+      "position3d": { "x": 0, "y": 4.5, "z": -1 }
+    }
+  ],
+  "skills": {
+    "Frontend Development": [
+      { "name": "React", "level": 5, "icon": "⚛️" },
+      { "name": "JavaScript", "level": 5, "icon": "🟨" },
+      { "name": "CSS/HTML", "level": 5, "icon": "🎨" },
+      { "name": "Responsive Design", "level": 5, "icon": "📱" }
+    ],
+    "Backend Development": [
+      { "name": "Node.js", "level": 4, "icon": "🟩" },
+      { "name": "API Design", "level": 4, "icon": "🔌" }
+    ],
+    "VR/3D Technologies": [
+      { "name": "A-Frame", "level": 4, "icon": "🥽" },
+      { "name": "Three.js", "level": 3, "icon": "🎮" },
+      { "name": "WebGL", "level": 3, "icon": "✨" }
+    ],
+    "Tools & Practices": [
+      { "name": "Git/GitHub", "level": 4, "icon": "🔧" },
+      { "name": "Problem Solving", "level": 5, "icon": "🧠" },
+      { "name": "Responsive Development", "level": 5, "icon": "⚙️" }
+    ]
+  },
+  "projects": [
+    {
+      "id": "eng104",
+      "name": "ENG104 Monster",
+      "description": "Interactive timeline exploring monster evolution through media culture",
+      "technologies": ["React", "jsPDF", "JavaScript"],
+      "image": "https://i.ibb.co/gZc447VZ/ENG104-Monster.png",
+      "link": "https://eng104monster.netlify.app",
+      "category": "FRONTEND DEVELOPMENT",
+      "achievements": [
+        "Created engaging interactive timeline",
+        "Implemented PDF export functionality",
+        "Responsive design for all devices"
+      ]
+    },
+    {
+      "id": "corpstube",
+      "name": "Corpstube",
+      "description": "Custom video streaming platform for Ball State Digital Corps",
+      "technologies": ["React", "Node.js", "API Integration"],
+      "image": "https://i.ibb.co/VcZPb1St/Corpstube.png",
+      "link": "https://corptube.netlify.app",
+      "category": "FRONTEND DEVELOPMENT",
+      "achievements": [
+        "Full-stack video platform",
+        "Advanced state management with Context",
+        "Comment and like system"
+      ]
+    },
+    {
+      "id": "corpsify",
+      "name": "Corpsify",
+      "description": "Sound search application with real-time filtering and playback",
+      "technologies": ["React", "API Integration", "Vite"],
+      "image": "https://i.ibb.co/MDCT4fM1/corpsify.png",
+      "link": "https://corpsify.vercel.app",
+      "category": "FRONTEND DEVELOPMENT",
+      "achievements": [
+        "First major React project",
+        "API integration and error handling",
+        "Search and filtering functionality"
+      ]
+    },
+    {
+      "id": "saintly",
+      "name": "Saintly",
+      "description": "Freelance website with modern design and interactive components",
+      "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
+      "image": "https://via.placeholder.com/400x300?text=Saintly+Project",
+      "link": "#",
+      "category": "FRONTEND DEVELOPMENT",
+      "achievements": [
+        "First freelancing project",
+        "Bootstrap implementation",
+        "Carousel and slider components"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "name": "The Builders Scholarship",
+      "issuer": "Ball State University",
+      "date": "2023-2025",
+      "description": "Competitive scholarship recognizing academic excellence and potential in technology",
+      "icon": "🏆"
+    }
+  ],
+  "about": {
+    "journey": "From Lagos to Muncie and back, my journey in technology has been shaped by curiosity and a passion for creating experiences that matter. Each project represents a step in my growth as a developer.",
+    "philosophy": "I believe in writing code that's not just functional, but beautiful—code that solves real problems and creates lasting value for users.",
+    "interests": ["Web Development", "VR/3D Experiences", "Creative Computing", "User Experience Design", "Open Source"]
+  }
+}
+

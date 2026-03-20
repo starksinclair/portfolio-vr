@@ -4,17 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio Museum</title>
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Space+Grotesk:wght@400;500;600&display=swap");
 
       :root {
-        --gold: #d4a24f;
-        --deep: #09121b;
-        --warm: #ecdfc8;
-        --muted: rgba(236, 223, 200, 0.72);
-        --panel: rgba(9, 18, 27, 0.88);
-        --panel-line: rgba(212, 162, 79, 0.28);
+        --bg-void: #030711;
+        --bg-panel: rgba(7, 15, 27, 0.82);
+        --bg-panel-strong: rgba(7, 15, 27, 0.92);
+        --line-soft: rgba(150, 208, 255, 0.14);
+        --line-strong: rgba(194, 234, 255, 0.28);
+        --text-primary: #ecf6ff;
+        --text-muted: rgba(209, 227, 247, 0.72);
+        --accent-cyan: #7adfff;
+        --accent-ice: #c7efff;
+        --accent-violet: #95a7ff;
+        --danger: rgba(255, 184, 184, 0.84);
       }
 
       * {
@@ -27,9 +32,9 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #02070f;
-        color: var(--warm);
-        font-family: "DM Mono", monospace;
+        background: var(--bg-void);
+        color: var(--text-primary);
+        font-family: "Space Grotesk", sans-serif;
       }
 
       a-scene {
@@ -37,19 +42,10 @@
         inset: 0;
       }
 
-      .overlay {
+      .hud {
         position: fixed;
-        inset: 0;
-        z-index: 15;
-        pointer-events: none;
-      }
-
-      .topbar {
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        right: 1rem;
-        z-index: 16;
+        inset: 1rem 1rem auto 1rem;
+        z-index: 10;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -57,58 +53,137 @@
         pointer-events: none;
       }
 
-      .brand,
-      .controls {
-        padding: 0.9rem 1rem;
-        border: 1px solid var(--panel-line);
-        background: rgba(5, 12, 18, 0.72);
-        backdrop-filter: blur(16px);
+      .glass-panel {
+        border: 1px solid var(--line-soft);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+          var(--bg-panel);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          0 30px 84px rgba(1, 6, 18, 0.42);
+        backdrop-filter: blur(18px);
       }
 
-      .brand h1 {
+      .brand-panel,
+      .utility-panel {
+        padding: 1rem 1.1rem;
+      }
+
+      .brand-panel {
+        width: min(28rem, calc(100vw - 2rem));
+      }
+
+      .utility-panel {
+        width: min(23rem, calc(100vw - 2rem));
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 0.55rem;
+        color: var(--accent-cyan);
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .brand-panel h1,
+      .panel-title {
         margin: 0;
         font-family: "Cormorant Garamond", serif;
-        font-size: 1.7rem;
-        font-weight: 500;
-        letter-spacing: 0.02em;
+        font-weight: 600;
+        letter-spacing: 0.03em;
       }
 
-      .brand p,
-      .controls p {
-        margin: 0.3rem 0 0;
-        color: var(--muted);
-        font-size: 0.68rem;
-        line-height: 1.6;
+      .brand-panel h1 {
+        font-size: clamp(2rem, 3.5vw, 3rem);
+        line-height: 0.94;
       }
 
-      .controls {
-        max-width: 300px;
+      .brand-panel p,
+      .utility-panel p,
+      .section p,
+      .section li,
+      .empty-state {
+        margin: 0.55rem 0 0;
+        color: var(--text-muted);
+        font-size: 0.84rem;
+        line-height: 1.7;
       }
 
-      .panel {
+      .action-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        pointer-events: auto;
+      }
+
+      .ghost-link,
+      .close-btn,
+      .action-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.8rem;
+        padding: 0.75rem 0.95rem;
+        border: 1px solid var(--line-strong);
+        background: rgba(10, 19, 32, 0.72);
+        color: var(--accent-ice);
+        text-decoration: none;
+        font: inherit;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        cursor: pointer;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background-color 180ms ease,
+          color 180ms ease;
+      }
+
+      .ghost-link:hover,
+      .close-btn:hover,
+      .action-link:hover {
+        transform: translateY(-1px);
+        border-color: rgba(199, 239, 255, 0.46);
+        background: rgba(122, 223, 255, 0.08);
+        color: var(--text-primary);
+      }
+
+      .action-link {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .detail-panel {
         position: fixed;
         top: 50%;
-        right: 1.25rem;
-        z-index: 16;
-        width: min(430px, calc(100vw - 2rem));
-        max-height: calc(100vh - 3rem);
-        overflow-y: auto;
-        transform: translateY(-50%);
+        right: 1.1rem;
+        z-index: 12;
+        width: min(30rem, calc(100vw - 2rem));
+        max-height: calc(100vh - 2.2rem);
         padding: 1.15rem;
-        border: 1px solid var(--panel-line);
-        background: var(--panel);
-        backdrop-filter: blur(18px);
+        overflow-y: auto;
+        transform: translateY(-50%) translateX(0.8rem);
         opacity: 0;
         pointer-events: none;
         transition:
-          opacity 240ms ease,
-          transform 240ms ease;
+          transform 240ms ease,
+          opacity 240ms ease;
       }
 
-      .panel.is-visible {
+      .detail-panel.is-visible {
         opacity: 1;
         pointer-events: auto;
         transform: translateY(-50%) translateX(0);
+      }
+
+      .detail-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .detail-panel::-webkit-scrollbar-thumb {
+        background: rgba(122, 223, 255, 0.28);
       }
 
       .panel-header {
@@ -119,85 +194,30 @@
       }
 
       .panel-title {
-        font-family: "Cormorant Garamond", serif;
-        font-size: 2rem;
-        line-height: 1;
+        font-size: 2.25rem;
+        line-height: 0.95;
       }
 
       .panel-meta {
-        margin-top: 0.3rem;
-        color: var(--gold);
-        font-size: 0.68rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-      }
-
-      .close-btn,
-      .home-link,
-      .action-link {
-        border: 1px solid rgba(212, 162, 79, 0.4);
-        background: rgba(9, 18, 27, 0.82);
-        color: var(--gold);
-        font: inherit;
-        cursor: pointer;
-        pointer-events: auto;
-        text-decoration: none;
-        transition:
-          background-color 180ms ease,
-          color 180ms ease,
-          transform 180ms ease;
-      }
-
-      .close-btn,
-      .home-link {
-        padding: 0.7rem 0.95rem;
-        font-size: 0.68rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .action-link {
-        display: inline-flex;
-        justify-content: center;
-        width: 100%;
-        padding: 0.95rem 1rem;
-        margin-top: 1rem;
-        background: var(--gold);
-        color: #0a1016;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
+        margin-top: 0.35rem;
+        color: var(--accent-cyan);
         font-size: 0.72rem;
-      }
-
-      .home-link:hover,
-      .close-btn:hover {
-        background: var(--gold);
-        color: #0a1016;
-      }
-
-      .action-link:hover {
-        transform: translateY(-1px);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
       }
 
       .section {
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
       }
 
       .section h2 {
         margin: 0 0 0.55rem;
-        color: var(--gold);
-        font-size: 0.72rem;
-        letter-spacing: 0.18em;
+        color: var(--accent-ice);
+        font-size: 0.76rem;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
-      }
-
-      .section p,
-      .section li {
-        color: var(--muted);
-        font-size: 0.8rem;
-        line-height: 1.7;
       }
 
       .section ul {
@@ -209,98 +229,95 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.45rem;
+        margin-top: 0.8rem;
       }
 
       .chip {
-        padding: 0.35rem 0.55rem;
-        border: 1px solid rgba(212, 162, 79, 0.24);
-        color: var(--warm);
+        padding: 0.42rem 0.65rem;
+        border: 1px solid rgba(199, 239, 255, 0.16);
+        color: var(--text-primary);
         font-size: 0.68rem;
-        background: rgba(212, 162, 79, 0.08);
+        letter-spacing: 0.06em;
+        background: rgba(122, 223, 255, 0.08);
       }
 
       .fallback {
         position: fixed;
         left: 50%;
         top: 50%;
-        z-index: 16;
-        width: min(520px, calc(100vw - 2rem));
-        padding: 1.2rem;
-        border: 1px solid rgba(197, 104, 104, 0.32);
-        background: rgba(24, 8, 12, 0.9);
-        color: #f8d6d6;
+        z-index: 14;
+        width: min(30rem, calc(100vw - 2rem));
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(255, 184, 184, 0.24);
+        background: rgba(28, 10, 16, 0.9);
+        color: #ffe2e2;
         transform: translate(-50%, -50%);
         display: none;
-        pointer-events: auto;
       }
 
       .fallback.is-visible {
         display: block;
       }
 
-      .cloud-transition {
+      .veil-transition {
         position: fixed;
         inset: 0;
-        z-index: 20;
+        z-index: 18;
         background:
-          radial-gradient(
-            circle at center,
-            rgba(188, 232, 255, 0.09),
-            transparent 30%
-          ),
-          linear-gradient(180deg, rgba(3, 6, 12, 0.1), rgba(3, 6, 12, 0.9));
+          radial-gradient(circle at center, rgba(133, 221, 255, 0.08), transparent 30%),
+          linear-gradient(180deg, rgba(3, 7, 17, 0.2), rgba(3, 7, 17, 0.92));
         opacity: 1;
         pointer-events: none;
-        transition: opacity 900ms ease;
+        transition: opacity 880ms ease;
       }
 
-      .cloud-transition.is-clearing {
+      .veil-transition.is-clearing {
         opacity: 0;
       }
 
-      .cloud {
+      .veil-cloud {
         position: absolute;
         border-radius: 999px;
         background: radial-gradient(
-          circle at 30% 40%,
-          rgba(255, 255, 255, 0.92),
-          rgba(208, 239, 255, 0.72) 50%,
-          rgba(144, 205, 244, 0.12) 72%,
-          transparent 78%
+          circle at 32% 40%,
+          rgba(255, 255, 255, 0.86),
+          rgba(205, 236, 255, 0.62) 48%,
+          rgba(117, 187, 255, 0.18) 72%,
+          transparent 80%
         );
         filter: blur(18px);
-        animation: drift 7.5s ease-in-out infinite;
+        animation: drift 7s ease-in-out infinite;
       }
 
-      .cloud-a {
-        width: 420px;
-        height: 230px;
-        left: 5%;
-        top: 9%;
+      .veil-a {
+        width: 380px;
+        height: 210px;
+        left: 6%;
+        top: 12%;
       }
 
-      .cloud-b {
-        width: 370px;
-        height: 220px;
-        right: 8%;
-        top: 14%;
+      .veil-b {
+        width: 340px;
+        height: 200px;
+        right: 10%;
+        top: 16%;
         animation-delay: 0.8s;
       }
 
-      .cloud-c {
-        width: 460px;
-        height: 250px;
+      .veil-c {
+        width: 420px;
+        height: 220px;
         left: 18%;
         bottom: 8%;
-        animation-delay: 1.2s;
+        animation-delay: 1.3s;
       }
 
-      .cloud-d {
-        width: 390px;
-        height: 220px;
-        right: 18%;
-        bottom: 6%;
-        animation-delay: 1.8s;
+      .veil-d {
+        width: 360px;
+        height: 210px;
+        right: 16%;
+        bottom: 7%;
+        animation-delay: 1.7s;
       }
 
       @keyframes drift {
@@ -309,61 +326,67 @@
           transform: translate3d(0, 0, 0) scale(1);
         }
         50% {
-          transform: translate3d(18px, -10px, 0) scale(1.04);
+          transform: translate3d(16px, -8px, 0) scale(1.04);
         }
       }
 
-      @media (max-width: 900px) {
-        .topbar {
+      @media (max-width: 980px) {
+        .hud {
           flex-direction: column;
-          align-items: stretch;
         }
 
-        .controls {
-          max-width: none;
+        .brand-panel,
+        .utility-panel {
+          width: auto;
         }
 
-        .panel {
+        .detail-panel {
           top: auto;
-          right: 1rem;
           left: 1rem;
+          right: 1rem;
           bottom: 1rem;
           width: auto;
-          max-height: 55vh;
-          transform: translateY(8px);
+          max-height: 52vh;
+          transform: translateY(0) translateX(0);
         }
 
-        .panel.is-visible {
-          transform: translateY(0);
+        .detail-panel.is-visible {
+          transform: translateY(0) translateX(0);
         }
       }
     </style>
   </head>
   <body>
-    <div id="cloudTransition" class="cloud-transition">
-      <div class="cloud cloud-a"></div>
-      <div class="cloud cloud-b"></div>
-      <div class="cloud cloud-c"></div>
-      <div class="cloud cloud-d"></div>
+    <div id="veilTransition" class="veil-transition">
+      <div class="veil-cloud veil-a"></div>
+      <div class="veil-cloud veil-b"></div>
+      <div class="veil-cloud veil-c"></div>
+      <div class="veil-cloud veil-d"></div>
     </div>
 
-    <div class="topbar">
-      <div class="brand">
+    <div class="hud">
+      <div class="glass-panel brand-panel">
+        <span class="eyebrow">Luminous Gallery</span>
         <h1>Portfolio Museum</h1>
         <p>
-          Walk the gallery and open any exhibit to inspect the work behind it.
+          A restrained archive of selected work staged as illuminated exhibits
+          inside a cosmic hall.
         </p>
       </div>
-      <div class="controls">
-        <a class="home-link" href="../index.html">Return Home</a>
+
+      <div class="glass-panel utility-panel">
+        <div class="action-row">
+          <a class="ghost-link" href="../index.html">Return Home</a>
+        </div>
         <p>
-          Desktop: drag to look, use WASD to move, and click an exhibit. VR gaze
-          works on the glowing display surfaces.
+          Desktop: drag to look, use WASD to move, and click any framed
+          installation. VR gaze and controller rays target the glowing media
+          planes.
         </p>
       </div>
     </div>
 
-    <div id="detailPanel" class="panel" aria-live="polite">
+    <div id="detailPanel" class="glass-panel detail-panel" aria-live="polite">
       <div class="panel-header">
         <div>
           <div id="panelTitle" class="panel-title">Select an exhibit</div>
@@ -373,8 +396,9 @@
       </div>
       <div id="panelContent">
         <div class="section">
-          <p>
-            Choose a pedestal in the gallery to load the project details here.
+          <p class="empty-state">
+            Step into any installation to load the project narrative, decisions,
+            and build details here.
           </p>
         </div>
       </div>
@@ -386,40 +410,62 @@
         rel="noreferrer"
         hidden
       >
-        Open Project
+        Visit Project
       </a>
     </div>
 
     <div id="fallback" class="fallback">
       <strong>Portfolio data failed to load.</strong>
       <p>
-        The museum could not fetch `../data.json`. Check that the page is being
-        served from a local or remote web server, not opened directly with
-        `file://`.
+        The museum could not fetch `../data.json`. Serve the project over HTTP
+        instead of opening the file directly.
       </p>
     </div>
 
     <a-scene
-      background="color: #ffffff"
-      fog="type: exponential; color: #ffffff; density: 0.018"
+      background="color: #030711"
+      fog="type: exponential; color: #04101b; density: 0.02"
       renderer="colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: true"
     >
+      <a-assets>
+        <img id="museumSky" src="../assets/images/sky.jpeg" alt="" />
+      </a-assets>
+
+      <a-sky src="#museumSky" rotation="0 -90 0"></a-sky>
+
       <a-entity id="museumRoot"></a-entity>
 
-      <a-entity id="rig" position="0 0 2">
+      <a-entity id="rig" position="0 0 4">
         <a-camera wasd-controls look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
             fuse-timeout="1100"
-            color="#d4a24f"
+            color="#9de7ff"
             raycaster="objects: .clickable"
           ></a-cursor>
         </a-camera>
       </a-entity>
+
+      <a-entity
+        laser-controls="hand: left"
+        raycaster="objects: .clickable; far: 14"
+        line="color: #c7efff; opacity: 0.76"
+      ></a-entity>
+
+      <a-entity
+        laser-controls="hand: right"
+        raycaster="objects: .clickable; far: 14"
+        line="color: #c7efff; opacity: 0.76"
+      ></a-entity>
     </a-scene>
 
     <script>
+      const FONT_URL =
+        "https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json";
+      const FONT_IMAGE =
+        "https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png";
+
       const museumRoot = document.getElementById("museumRoot");
       const detailPanel = document.getElementById("detailPanel");
       const panelTitle = document.getElementById("panelTitle");
@@ -428,9 +474,7 @@
       const closePanel = document.getElementById("closePanel");
       const externalLink = document.getElementById("externalLink");
       const fallback = document.getElementById("fallback");
-      const cloudTransition = document.getElementById("cloudTransition");
-
-      let projects = [];
+      const veilTransition = document.getElementById("veilTransition");
 
       function createElement(tag, attrs = {}) {
         const el = document.createElement(tag);
@@ -440,91 +484,227 @@
         return el;
       }
 
-      function addStaticMuseumShell() {
-        museumRoot.appendChild(
-          createElement("a-plane", {
-            rotation: "-90 0 0",
-            width: "40",
-            height: "90",
-            color: "#08141f",
-            material: "roughness: 1",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-plane", {
-            rotation: "-90 0 0",
-            position: "0 0.01 -20",
-            width: "8",
-            height: "82",
-            color: "#ba0c2f",
-            material: "emissive: #ba0c2f; emissiveIntensity: 0.2",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-box", {
-            position: "0 5.5 -42",
-            width: "28",
-            height: "11",
-            depth: "1",
-            color: "#0a1621",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-text", {
-            value: "PORTFOLIO MUSEUM",
-            position: "0 7.8 -41.4",
-            align: "center",
-            color: "#d4a24f",
-            width: "18",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-text", {
-            value: "Walk the central hall and inspect the exhibits.",
-            position: "0 6.8 -41.35",
-            align: "center",
-            color: "#d2e8f6",
-            width: "12",
-          }),
-        );
-
-        [
-          { position: "-6 4 -8" },
-          { position: "6 4 -12" },
-          { position: "-6 4 -18" },
-          { position: "6 4 -24" },
-          { position: "-6 4 -30" },
-          { position: "6 4 -36" },
-        ].forEach((light) => {
-          museumRoot.appendChild(
-            createElement("a-light", {
-              type: "point",
-              color: "#ffd48a",
-              intensity: "0.75",
-              distance: "12",
-              ...light,
-            }),
-          );
+      function createText(attrs = {}) {
+        return createElement("a-text", {
+          shader: "msdf",
+          font: FONT_URL,
+          "font-image": FONT_IMAGE,
+          ...attrs,
         });
+      }
 
+      function addMuseumShell() {
         museumRoot.appendChild(
           createElement("a-light", {
             type: "ambient",
-            intensity: "0.7",
-            color: "#d6e4f8",
+            intensity: "0.34",
+            color: "#d6e8ff",
           }),
         );
 
         museumRoot.appendChild(
           createElement("a-light", {
             type: "directional",
-            intensity: "0.45",
-            color: "#b7dfff",
-            position: "-3 8 2",
+            intensity: "0.42",
+            color: "#7dd7ff",
+            position: "-3 8 3",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-light", {
+            type: "directional",
+            intensity: "0.16",
+            color: "#95a7ff",
+            position: "4 5 -6",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-plane", {
+            rotation: "-90 0 0",
+            position: "0 -0.18 -30",
+            width: "28",
+            height: "78",
+            color: "#040a13",
+            material: "metalness: 0.08; roughness: 0.92",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-plane", {
+            rotation: "-90 0 0",
+            position: "0 -0.08 -30",
+            width: "8.6",
+            height: "76",
+            color: "#08121f",
+            material:
+              "emissive: #0c2134; emissiveIntensity: 0.14; opacity: 0.9; transparent: true",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-plane", {
+            rotation: "-90 0 0",
+            position: "0 -0.07 -30",
+            width: "0.18",
+            height: "76",
+            color: "#c7efff",
+            material:
+              "emissive: #7adfff; emissiveIntensity: 0.86; opacity: 0.82; transparent: true",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-box", {
+            position: "-11 3.25 -30",
+            width: "0.3",
+            height: "6.5",
+            depth: "78",
+            color: "#050d16",
+            material:
+              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-box", {
+            position: "11 3.25 -30",
+            width: "0.3",
+            height: "6.5",
+            depth: "78",
+            color: "#050d16",
+            material:
+              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-box", {
+            position: "0 6.45 -30",
+            width: "16.4",
+            height: "0.22",
+            depth: "78",
+            color: "#050d16",
+            material:
+              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
+          }),
+        );
+
+        for (let i = 0; i < 8; i += 1) {
+          const z = -7 - i * 8.5;
+
+          museumRoot.appendChild(
+            createElement("a-box", {
+              position: "-8.1 3.1 " + z,
+              width: "0.14",
+              height: "3.9",
+              depth: "0.16",
+              color: "#d2f3ff",
+              material:
+                "emissive: #7adfff; emissiveIntensity: 0.54; opacity: 0.76; transparent: true",
+            }),
+          );
+
+          museumRoot.appendChild(
+            createElement("a-box", {
+              position: "8.1 3.1 " + z,
+              width: "0.14",
+              height: "3.9",
+              depth: "0.16",
+              color: "#d2f3ff",
+              material:
+                "emissive: #7adfff; emissiveIntensity: 0.54; opacity: 0.76; transparent: true",
+            }),
+          );
+
+          museumRoot.appendChild(
+            createElement("a-entity", {
+              geometry: "primitive: torus; radius: 5.2; radiusTubular: 0.018",
+              position: "0 5.15 " + z,
+              rotation: "0 0 90",
+              scale: "1 0.56 1",
+              material:
+                "color: #9fe7ff; emissive: #7adfff; emissiveIntensity: 0.28; opacity: 0.22; transparent: true",
+            }),
+          );
+        }
+
+        museumRoot.appendChild(
+          createElement("a-box", {
+            position: "0 4.15 -63",
+            width: "8",
+            height: "7.2",
+            depth: "0.3",
+            color: "#040b14",
+            material:
+              "opacity: 0.5; transparent: true; emissive: #081728; emissiveIntensity: 0.16",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-entity", {
+            geometry: "primitive: torus; radius: 2.6; radiusTubular: 0.04",
+            position: "0 4.2 -62.7",
+            rotation: "0 0 90",
+            scale: "1 1.3 1",
+            material:
+              "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.44; opacity: 0.34; transparent: true",
+            animation:
+              "property: rotation; to: 0 0 450; dur: 30000; loop: true; easing: linear",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createText({
+            value: "Project Archive",
+            position: "0 6.15 -62.2",
+            align: "center",
+            color: "#ecf6ff",
+            width: "8.6",
+            material: "emissive: #d6efff; emissiveIntensity: 0.24",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createText({
+            value: "A calm axial gallery for selected builds",
+            position: "0 5.5 -62.2",
+            align: "center",
+            color: "#a9c9df",
+            width: "5.1",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createElement("a-plane", {
+            position: "0 4.15 -6.2",
+            width: "6.2",
+            height: "2.2",
+            color: "#06101a",
+            material:
+              "opacity: 0.56; transparent: true; emissive: #0a1a29; emissiveIntensity: 0.16",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createText({
+            value: "Portfolio Museum",
+            position: "0 4.55 -6",
+            align: "center",
+            color: "#ecf6ff",
+            width: "7.4",
+            material: "emissive: #d6efff; emissiveIntensity: 0.26",
+          }),
+        );
+
+        museumRoot.appendChild(
+          createText({
+            value: "Each installation reveals process, constraints, and outcomes.",
+            position: "0 3.95 -6",
+            align: "center",
+            color: "#a9c9df",
+            width: "4.8",
           }),
         );
       }
@@ -556,7 +736,7 @@
 
       function openProject(project) {
         panelTitle.textContent = project.title;
-        panelMeta.textContent = `${project.category} · ${project.status}`;
+        panelMeta.textContent = `${project.category} / ${project.status}`;
         panelContent.innerHTML = "";
 
         const overview = document.createElement("section");
@@ -573,15 +753,14 @@
 
         const techWrap = document.createElement("div");
         techWrap.className = "chips";
-        (Array.isArray(project.technologies)
-          ? project.technologies
-          : []
-        ).forEach((tech) => {
-          const chip = document.createElement("span");
-          chip.className = "chip";
-          chip.textContent = tech;
-          techWrap.appendChild(chip);
-        });
+        (Array.isArray(project.technologies) ? project.technologies : []).forEach(
+          (tech) => {
+            const chip = document.createElement("span");
+            chip.className = "chip";
+            chip.textContent = tech;
+            techWrap.appendChild(chip);
+          },
+        );
         overview.appendChild(techWrap);
 
         panelContent.appendChild(overview);
@@ -609,102 +788,198 @@
       function buildExhibit(project, index) {
         const side = index % 2 === 0 ? -1 : 1;
         const row = Math.floor(index / 2);
-        const x = side * 4.8;
-        const z = -8 - row * 6.2;
+        const x = side * 6.1;
+        const z = -12 - row * 8.2;
+        const rotationY = side < 0 ? 12 : -12;
+        const accent = side < 0 ? "#7adfff" : "#c7efff";
+        const edge = side < 0 ? "#9de7ff" : "#95a7ff";
 
         const exhibit = createElement("a-entity", {
           position: `${x} 0 ${z}`,
+          rotation: `0 ${rotationY} 0`,
         });
 
+        const base = createElement("a-cylinder", {
+          radius: "1.4",
+          height: "0.24",
+          position: "0 0.12 0.05",
+          color: "#07101a",
+          material: "emissive: #122338; emissiveIntensity: 0.16",
+        });
+        exhibit.appendChild(base);
+
         exhibit.appendChild(
-          createElement("a-cylinder", {
-            radius: "0.9",
-            height: "1.1",
-            position: "0 0.55 0",
-            color: side < 0 ? "#4b3020" : "#22313f",
+          createElement("a-ring", {
+            rotation: "-90 0 0",
+            position: "0 0.14 0.05",
+            "radius-inner": "0.92",
+            "radius-outer": "1.26",
+            color: "#091421",
+            material: `emissive: ${accent}; emissiveIntensity: 0.34; opacity: 0.84; transparent: true`,
           }),
         );
 
         exhibit.appendChild(
           createElement("a-box", {
-            width: "1.9",
-            height: "0.18",
-            depth: "1.9",
-            position: "0 1.2 0",
-            color: "#d8c3a1",
+            position: "0 2.65 -0.42",
+            width: "3.7",
+            height: "4.7",
+            depth: "0.22",
+            color: "#050d16",
+            material:
+              "opacity: 0.56; transparent: true; emissive: #071829; emissiveIntensity: 0.18",
+          }),
+        );
+
+        const halo = createElement("a-entity", {
+          class: "exhibit-halo",
+          geometry: "primitive: torus; radius: 1.65; radiusTubular: 0.03",
+          position: "0 2.9 -0.2",
+          rotation: "0 0 90",
+          scale: "0.98 1.38 0.98",
+          material: `color: ${edge}; emissive: ${accent}; emissiveIntensity: 0.38; opacity: 0.34; transparent: true`,
+        });
+        exhibit.appendChild(halo);
+
+        exhibit.appendChild(
+          createElement("a-box", {
+            position: "-1.46 2.7 -0.1",
+            width: "0.08",
+            height: "4.1",
+            depth: "0.22",
+            color: "#d8f6ff",
+            material: `emissive: ${accent}; emissiveIntensity: 0.44; opacity: 0.82; transparent: true`,
           }),
         );
 
         exhibit.appendChild(
-          createElement("a-plane", {
-            position: "0 2.45 0",
-            width: "2.45",
-            height: "3.1",
-            color: "#0e1a24",
-            material: "emissive: #0e1a24; emissiveIntensity: 0.25",
+          createElement("a-box", {
+            position: "1.46 2.7 -0.1",
+            width: "0.08",
+            height: "4.1",
+            depth: "0.22",
+            color: "#d8f6ff",
+            material: `emissive: ${accent}; emissiveIntensity: 0.44; opacity: 0.82; transparent: true`,
           }),
         );
 
+        const mediaFrame = createElement("a-plane", {
+          class: "exhibit-frame",
+          position: "0 3.02 0.02",
+          width: "2.3",
+          height: "3.15",
+          color: "#07101a",
+          material: `opacity: 0.82; transparent: true; emissive: ${accent}; emissiveIntensity: 0.16`,
+        });
+        exhibit.appendChild(mediaFrame);
+
         exhibit.appendChild(
           createElement("a-plane", {
-            position: "0 2.45 0.04",
-            width: "1.9",
-            height: "2.4",
+            position: "0 3.02 0.06",
+            width: "2.04",
+            height: "2.6",
             src: project.thumbnail,
+            material: "shader: flat",
           }),
         );
+
+        const mediaVeil = createElement("a-plane", {
+          class: "exhibit-veil",
+          position: "0 3.02 0.08",
+          width: "2.04",
+          height: "2.6",
+          color: accent,
+          material: `opacity: 0.08; transparent: true; emissive: ${accent}; emissiveIntensity: 0.34`,
+        });
+        exhibit.appendChild(mediaVeil);
+
+        const hitbox = createElement("a-plane", {
+          class: "clickable exhibit-hitbox",
+          position: "0 3.02 0.11",
+          width: "2.06",
+          height: "2.6",
+          color: "#ffffff",
+          material: "opacity: 0.001; transparent: true",
+        });
+        exhibit.appendChild(hitbox);
 
         exhibit.appendChild(
           createElement("a-plane", {
-            class: "clickable",
-            position: "0 2.45 0.08",
-            width: "2.1",
-            height: "2.65",
-            color: "#ffffff",
-            opacity: "0.001",
-            material: "transparent: true",
+            position: "0 1.42 0.66",
+            rotation: "-68 0 0",
+            width: "2.04",
+            height: "0.62",
+            color: "#06101a",
+            material: `opacity: 0.92; transparent: true; emissive: ${edge}; emissiveIntensity: 0.12`,
           }),
         );
 
-        exhibit.appendChild(
-          createElement("a-plane", {
-            position: "0 0.95 0.8",
-            rotation: "-65 0 0",
-            width: "1.8",
-            height: "0.5",
-            color: "#071018",
-            material: "emissive: #0a1621; emissiveIntensity: 0.2",
-          }),
-        );
-
-        exhibit.appendChild(
-          createElement("a-text", {
-            value: project.title,
-            position: "0 1 -0.22",
-            align: "center",
-            color: "#f5e5c8",
-            width: "3.1",
-          }),
-        );
-
-        exhibit.appendChild(
-          createElement("a-text", {
-            value: project.category,
-            position: "0 0.73 -0.15",
-            align: "center",
-            color: "#d4a24f",
-            width: "2.8",
-          }),
-        );
-
-        const clickPlane = exhibit.querySelector(".clickable");
-        clickPlane.addEventListener("mouseenter", () => {
-          exhibit.setAttribute("scale", "1.03 1.03 1.03");
+        const titleText = createText({
+          value: project.title,
+          position: "0 1.56 0.3",
+          align: "center",
+          color: "#ecf6ff",
+          width: "3.1",
+          material: "emissive: #d8f2ff; emissiveIntensity: 0.2",
         });
-        clickPlane.addEventListener("mouseleave", () => {
-          exhibit.setAttribute("scale", "1 1 1");
+        exhibit.appendChild(titleText);
+
+        const metaText = createText({
+          value: project.category,
+          position: "0 1.18 0.36",
+          align: "center",
+          color: accent,
+          width: "2.4",
         });
-        clickPlane.addEventListener("click", () => {
+        exhibit.appendChild(metaText);
+
+        const exhibitLight = createElement("a-light", {
+          class: "exhibit-light",
+          type: "point",
+          color: accent,
+          intensity: "0.65",
+          distance: "8",
+          position: "0 3.5 1.6",
+        });
+        exhibit.appendChild(exhibitLight);
+
+        const beacon = createElement("a-box", {
+          position: "0 5.2 -0.12",
+          width: "0.34",
+          height: "0.14",
+          depth: "0.34",
+          color: edge,
+          material: `emissive: ${accent}; emissiveIntensity: 0.94`,
+        });
+        exhibit.appendChild(beacon);
+
+        hitbox.addEventListener("mouseenter", () => {
+          exhibit.setAttribute(
+            "animation__hover",
+            "property: scale; to: 1.025 1.025 1.025; dur: 260; easing: easeInOutCubic",
+          );
+          halo.setAttribute("material", "emissiveIntensity", 0.7);
+          halo.setAttribute("material", "opacity", 0.56);
+          mediaFrame.setAttribute("material", "emissiveIntensity", 0.34);
+          mediaVeil.setAttribute("material", "opacity", 0.18);
+          exhibitLight.setAttribute("intensity", 1.1);
+          titleText.setAttribute("color", "#f7fbff");
+        });
+
+        hitbox.addEventListener("mouseleave", () => {
+          exhibit.setAttribute(
+            "animation__hover",
+            "property: scale; to: 1 1 1; dur: 260; easing: easeInOutCubic",
+          );
+          halo.setAttribute("material", "emissiveIntensity", 0.38);
+          halo.setAttribute("material", "opacity", 0.34);
+          mediaFrame.setAttribute("material", "emissiveIntensity", 0.16);
+          mediaVeil.setAttribute("material", "opacity", 0.08);
+          exhibitLight.setAttribute("intensity", 0.65);
+          titleText.setAttribute("color", "#ecf6ff");
+        });
+
+        hitbox.addEventListener("click", () => {
           openProject(project);
         });
 
@@ -712,17 +987,18 @@
       }
 
       async function loadProjects() {
-        addStaticMuseumShell();
+        addMuseumShell();
 
         try {
           const response = await fetch("../data.json", {
             credentials: "same-origin",
           });
+
           if (!response.ok) {
             throw new Error(`Request failed: ${response.status}`);
           }
 
-          projects = await response.json();
+          const projects = await response.json();
           projects.forEach((project, index) => {
             buildExhibit(project, index);
           });
@@ -735,28 +1011,28 @@
 
           museumRoot.appendChild(
             createElement("a-plane", {
-              position: "0 3 -8",
-              width: "7",
+              position: "0 3.2 -8",
+              width: "8",
               height: "2.8",
-              color: "#2b1116",
-              material: "opacity: 0.92; transparent: true",
+              color: "#220d12",
+              material: "opacity: 0.9; transparent: true",
             }),
           );
 
           museumRoot.appendChild(
-            createElement("a-text", {
+            createText({
               value:
-                "Portfolio data failed to load.\nServe this folder over HTTP and try again.",
-              position: "0 3.1 -7.8",
+                "Portfolio data failed to load.\nServe this folder over HTTP and reload.",
+              position: "0 3.3 -7.82",
               align: "center",
-              color: "#f5d1d1",
-              width: "8",
+              color: "#ffe2e2",
+              width: "8.5",
             }),
           );
         } finally {
-          setTimeout(() => {
-            cloudTransition.classList.add("is-clearing");
-          }, 180);
+          window.setTimeout(() => {
+            veilTransition.classList.add("is-clearing");
+          }, 160);
         }
       }
 

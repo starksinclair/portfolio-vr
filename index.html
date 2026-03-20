@@ -3,50 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lagos to Muncie and Back — The Builders Scholarship</title>
+    <title>Celestial Archive Portal</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <link rel="prefetch" href="portfolio/portfolio.html" />
+    <link rel="prefetch" href="resume/resume.html" />
     <link rel="prefetch" href="data.json" as="fetch" crossorigin="anonymous" />
+    <link
+      rel="prefetch"
+      href="resume/resume-data.json"
+      as="fetch"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="home.css" />
   </head>
   <body>
-    <div id="cloudTransition" class="cloud-transition" aria-hidden="true">
-      <div class="cloud cloud-a"></div>
-      <div class="cloud cloud-b"></div>
-      <div class="cloud cloud-c"></div>
-      <div class="cloud cloud-d"></div>
-      <div class="cloud cloud-e"></div>
-      <div class="cloud cloud-f"></div>
-      <div class="transition-copy">
-        <span>Crossing Into The Museum</span>
+    <div id="nebulaTransition" class="nebula-transition" aria-hidden="true">
+      <div class="nebula-cloud cloud-a"></div>
+      <div class="nebula-cloud cloud-b"></div>
+      <div class="nebula-cloud cloud-c"></div>
+      <div class="nebula-cloud cloud-d"></div>
+      <div class="nebula-cloud cloud-e"></div>
+      <div class="nebula-copy">
+        <span>Threshold Engaged</span>
+        <p>Crossing into the archive.</p>
       </div>
+    </div>
+
+    <div class="hud">
+      <div class="glass-panel brand-panel">
+        <span class="eyebrow">Immersive Portfolio</span>
+        <h1>Celestial Archive</h1>
+        <p>
+          A cinematic observatory suspended above a star field. Choose a
+          gateway to enter the portfolio museum or the resume archive.
+        </p>
+      </div>
+
+      <div class="glass-panel guide-panel">
+        <a class="ghost-link" href="portfolio/portfolio.html">Open museum directly</a>
+        <p>
+          Desktop: drag to look, use WASD to drift, and click a gateway. VR:
+          gaze or controllers lock onto the luminous portal cores.
+        </p>
+      </div>
+    </div>
+
+    <div class="scene-note">
+      <span class="eyebrow">Observatory Threshold</span>
+      <p>Layered portals, restrained glow, and spatial framing tuned for VR.</p>
     </div>
 
     <script>
       AFRAME.registerComponent("portal-interaction", {
         schema: {
-          targetUrl: { type: "string", default: "portfolio/portfolio.html" },
-          transitionSelector: { type: "string", default: "#cloudTransition" },
+          targetUrl: { type: "string" },
+          transitionSelector: { type: "string", default: "#nebulaTransition" },
           ambientAudioSelector: { type: "string", default: "#ambientSound" },
         },
 
         init: function () {
-          const el = this.el;
-
           this.isTransitioning = false;
-          this.cloudTransition = document.querySelector(
-            this.data.transitionSelector,
-          );
+          this.transitionEl = document.querySelector(this.data.transitionSelector);
           this.ambientAudio = document.querySelector(
             this.data.ambientAudioSelector,
           );
+          this.basePosition = AFRAME.utils.coordinates.parse(
+            this.el.getAttribute("position"),
+          );
 
-          this.hitbox = el.querySelector("#portalHitbox");
-          this.borderPlane = el.querySelector("#portalBorderPlane");
-          this.corePlane = el.querySelector("#portalCorePlane");
-          this.imagePlane = el.querySelector("#portalImagePlane");
+          this.hitbox = this.el.querySelector(".portal-hitbox");
+          this.preview = this.el.querySelector(".portal-preview");
+          this.cores = [...this.el.querySelectorAll(".portal-core")];
+          this.veils = [...this.el.querySelectorAll(".portal-veil")];
+          this.rims = [...this.el.querySelectorAll(".portal-rim")];
+          this.captions = [...this.el.querySelectorAll(".portal-caption")];
+          this.lights = [...this.el.querySelectorAll(".portal-light")];
 
-          this.prefetchMuseum();
+          this.prefetchTarget();
 
           this.onMouseEnter = this.onMouseEnter.bind(this);
           this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -58,7 +91,7 @@
             this.hitbox.addEventListener("click", this.onClick);
           }
 
-          el.addEventListener("click", this.onClick);
+          this.el.addEventListener("click", this.onClick);
         },
 
         remove: function () {
@@ -71,20 +104,26 @@
           this.el.removeEventListener("click", this.onClick);
         },
 
-        prefetchMuseum: function () {
-          fetch(this.data.targetUrl, { credentials: "same-origin" }).catch(
-            () => {},
-          );
+        prefetchTarget: function () {
+          if (this.data.targetUrl) {
+            fetch(this.data.targetUrl, { credentials: "same-origin" }).catch(
+              () => {},
+            );
+          }
+
           fetch("data.json", { credentials: "same-origin" }).catch(() => {});
+          fetch("resume/resume-data.json", {
+            credentials: "same-origin",
+          }).catch(() => {});
         },
 
         onMouseEnter: function () {
-          this.syncPortalHover(true);
+          this.syncPortalState("hover");
         },
 
         onMouseLeave: function () {
           if (!this.isTransitioning) {
-            this.syncPortalHover(false);
+            this.syncPortalState("default");
           }
         },
 
@@ -92,40 +131,85 @@
           this.activatePortal();
         },
 
-        syncPortalHover: function (isHovered) {
-          this.el.setAttribute("scale", isHovered ? "1.06 1.06 1.06" : "1 1 1");
+        setMaterialProps: function (elements, props) {
+          elements.forEach((el) => {
+            Object.entries(props).forEach(([key, value]) => {
+              el.setAttribute("material", key, value);
+            });
+          });
+        },
 
-          if (this.imagePlane) {
-            this.imagePlane.setAttribute(
-              "material",
-              "opacity",
-              isHovered ? 0.82 : 0,
-            );
+        setTextColor: function (elements, color) {
+          elements.forEach((el) => {
+            el.setAttribute("color", color);
+          });
+        },
+
+        animatePortalLift: function (lift, scale) {
+          const targetPosition = `${this.basePosition.x} ${this.basePosition.y + lift} ${this.basePosition.z}`;
+          this.el.setAttribute(
+            "animation__hoverpos",
+            `property: position; to: ${targetPosition}; dur: 420; easing: easeInOutCubic`,
+          );
+          this.el.setAttribute(
+            "animation__hoverscale",
+            `property: scale; to: ${scale}; dur: 420; easing: easeInOutCubic`,
+          );
+        },
+
+        syncPortalState: function (state) {
+          if (state === "hover") {
+            this.animatePortalLift(0.08, "1.035 1.035 1.035");
+            this.setMaterialProps(this.cores, {
+              emissiveIntensity: 0.62,
+              opacity: 0.82,
+            });
+            this.setMaterialProps(this.veils, {
+              opacity: 0.18,
+              emissiveIntensity: 0.68,
+            });
+            this.setMaterialProps(this.rims, {
+              emissiveIntensity: 0.92,
+              opacity: 0.76,
+            });
+            this.lights.forEach((light) => {
+              light.setAttribute("intensity", 1.1);
+            });
+            this.setTextColor(this.captions, "#f5fbff");
+            if (this.preview) {
+              this.preview.setAttribute("material", "opacity", 0.46);
+            }
+            return;
           }
 
-          if (this.corePlane) {
-            this.corePlane.setAttribute(
-              "material",
-              "emissiveIntensity",
-              isHovered ? 0.65 : 0.35,
-            );
-          }
-
-          if (this.borderPlane) {
-            this.borderPlane.setAttribute(
-              "material",
-              "emissiveIntensity",
-              isHovered ? 0.75 : 0.35,
-            );
+          this.animatePortalLift(0, "1 1 1");
+          this.setMaterialProps(this.cores, {
+            emissiveIntensity: 0.34,
+            opacity: 0.68,
+          });
+          this.setMaterialProps(this.veils, {
+            opacity: 0.1,
+            emissiveIntensity: 0.38,
+          });
+          this.setMaterialProps(this.rims, {
+            emissiveIntensity: 0.46,
+            opacity: 0.42,
+          });
+          this.lights.forEach((light) => {
+            light.setAttribute("intensity", 0.7);
+          });
+          this.setTextColor(this.captions, "#d8ebff");
+          if (this.preview) {
+            this.preview.setAttribute("material", "opacity", 0.18);
           }
         },
 
-        fadeAmbientOut: function (duration = 900) {
+        fadeAmbientOut: function (duration = 950) {
           if (!this.ambientAudio) {
             return;
           }
 
-          const startVolume = this.ambientAudio.volume || 0.3;
+          const startVolume = this.ambientAudio.volume || 0.24;
           const startTime = performance.now();
 
           const step = (now) => {
@@ -144,35 +228,51 @@
         },
 
         activatePortal: function () {
-          if (this.isTransitioning) {
+          if (this.isTransitioning || !this.data.targetUrl) {
             return;
           }
 
           this.isTransitioning = true;
-          this.syncPortalHover(true);
+          this.syncPortalState("hover");
           this.el.setAttribute("animation__float", "pause");
+          this.el.setAttribute(
+            "animation__engage",
+            "property: scale; to: 0.985 0.985 0.985; dur: 180; dir: alternate; loop: 1; easing: easeInOutCubic",
+          );
 
-          if (this.cloudTransition) {
-            this.cloudTransition.classList.add("is-active");
+          if (this.transitionEl) {
+            this.transitionEl.classList.add("is-active");
           }
 
           this.fadeAmbientOut();
 
-          setTimeout(() => {
+          window.setTimeout(() => {
             window.location.href = this.data.targetUrl;
-          }, 3350);
+          }, 2300);
         },
       });
     </script>
 
-    <a-scene background="color: #020617" renderer="colorManagement: true">
+    <a-scene
+      background="color: #030711"
+      fog="type: exponential; color: #04101d; density: 0.018"
+      renderer="colorManagement: true; physicallyCorrectLights: true"
+      vr-mode-ui="enabled: true"
+    >
       <a-assets>
-        <img id="lagosPanorama" src="assets/images/sky1.jpg"  alt=""/>
+        <img id="lagosPanorama" src="assets/images/sky1.jpg" alt="" />
         <img
           id="portalMuseumImage"
           src="assets/images/lagos-close-detail.jpg"
           crossorigin="anonymous"
-         alt=""/>
+          alt=""
+        />
+        <img
+          id="portalResumeImage"
+          src="assets/images/ball-state-bell-tower-sky-view.jpg"
+          crossorigin="anonymous"
+          alt=""
+        />
         <audio
           id="ambientSound"
           src="assets/audio/ambient/dayOne.mp3"
@@ -181,131 +281,449 @@
         ></audio>
       </a-assets>
 
-      <a-sky src="#lagosPanorama"></a-sky>
+      <a-sky src="#lagosPanorama" rotation="0 -90 0"></a-sky>
 
       <a-entity
-        id="ambientEntity"
-        sound="src: #ambientSound; autoplay: true; loop: true; volume: 0.3"
+        sound="src: #ambientSound; autoplay: true; loop: true; volume: 0.24"
       ></a-entity>
 
-      <a-light type="ambient" intensity="0.95" color="#d9efff"></a-light>
+      <a-light type="ambient" intensity="0.42" color="#cadfff"></a-light>
       <a-light
         type="directional"
-        intensity="0.55"
-        color="#9ad9ff"
-        position="-2 4 1"
+        intensity="0.48"
+        color="#86cfff"
+        position="-4 7 2"
+      ></a-light>
+      <a-light
+        type="directional"
+        intensity="0.22"
+        color="#7f8cff"
+        position="4 3 -4"
       ></a-light>
 
+      <a-entity id="gatewayStage">
+        <a-cylinder
+          position="0 -0.26 -6"
+          radius="6.8"
+          height="0.4"
+          color="#050c15"
+          material="metalness: 0.18; roughness: 0.74"
+        ></a-cylinder>
+
+        <a-cylinder
+          position="0 -0.1 -6"
+          radius="5.15"
+          height="0.08"
+          color="#091321"
+          material="emissive: #0a2134; emissiveIntensity: 0.18"
+        ></a-cylinder>
+
+        <a-ring
+          position="0 -0.05 -6"
+          rotation="-90 0 0"
+          radius-inner="3.95"
+          radius-outer="4.65"
+          color="#071120"
+          material="emissive: #3cbcff; emissiveIntensity: 0.32; opacity: 0.86; transparent: true"
+        ></a-ring>
+
+        <a-ring
+          position="0 0.01 -6"
+          rotation="-90 0 0"
+          radius-inner="2.42"
+          radius-outer="2.54"
+          color="#a9e8ff"
+          material="emissive: #7adfff; emissiveIntensity: 0.6; opacity: 0.8; transparent: true"
+        ></a-ring>
+
+        <a-box
+          position="0 2.8 -8.4"
+          width="7.4"
+          height="6.3"
+          depth="0.35"
+          color="#050d16"
+          material="opacity: 0.56; transparent: true; emissive: #061322; emissiveIntensity: 0.16"
+        ></a-box>
+
+        <a-entity
+          geometry="primitive: torus; radius: 2.8; radiusTubular: 0.045"
+          position="0 2.95 -8.1"
+          scale="1 1.28 1"
+          rotation="0 0 90"
+          material="color: #9ae8ff; emissive: #6ed8ff; emissiveIntensity: 0.46; opacity: 0.42; transparent: true"
+          animation="property: rotation; to: 0 0 450; dur: 30000; loop: true; easing: linear"
+        ></a-entity>
+
+        <a-entity
+          geometry="primitive: torus; radius: 3.36; radiusTubular: 0.016"
+          position="0 2.95 -8.25"
+          scale="1 1.38 1"
+          rotation="0 0 90"
+          material="color: #d8f3ff; emissive: #b1edff; emissiveIntensity: 0.25; opacity: 0.2; transparent: true"
+        ></a-entity>
+
+        <a-box
+          position="-4.65 2.1 -6.9"
+          width="0.24"
+          height="4.2"
+          depth="0.24"
+          color="#0a1422"
+          material="emissive: #15324d; emissiveIntensity: 0.2"
+        ></a-box>
+        <a-box
+          position="4.65 2.1 -6.9"
+          width="0.24"
+          height="4.2"
+          depth="0.24"
+          color="#0a1422"
+          material="emissive: #15324d; emissiveIntensity: 0.2"
+        ></a-box>
+
+        <a-box
+          position="-4.65 4.35 -6.9"
+          width="0.4"
+          height="0.16"
+          depth="0.4"
+          color="#b4eeff"
+          material="emissive: #7adfff; emissiveIntensity: 0.92"
+        ></a-box>
+        <a-box
+          position="4.65 4.35 -6.9"
+          width="0.4"
+          height="0.16"
+          depth="0.4"
+          color="#d6e8ff"
+          material="emissive: #96b3ff; emissiveIntensity: 0.68"
+        ></a-box>
+
+        <a-plane
+          position="0 0.02 -6"
+          rotation="-90 0 0"
+          width="1.1"
+          height="7.8"
+          color="#08121e"
+          material="emissive: #0d2f4f; emissiveIntensity: 0.42; opacity: 0.84; transparent: true"
+        ></a-plane>
+
+        <a-plane
+          position="0 0.03 -6"
+          rotation="-90 0 0"
+          width="0.12"
+          height="7.8"
+          color="#c7efff"
+          material="emissive: #7adfff; emissiveIntensity: 0.86; opacity: 0.86; transparent: true"
+        ></a-plane>
+      </a-entity>
+
       <a-entity
-        id="portalEntity"
+        id="portfolioPortal"
         portal-interaction="targetUrl: portfolio/portfolio.html"
-        position="0 2 -5"
-        animation__float="property: position; from: 0 2 -3.5; to: 0 2.08 -3.5; dur: 3400; easing: easeInOutSine; dir: alternate; loop: true"
+        position="-1.85 2.05 -5.55"
+        rotation="0 7 0"
+        animation__float="property: position; from: -1.85 2.01 -5.55; to: -1.85 2.09 -5.55; dur: 4200; easing: easeInOutSine; dir: alternate; loop: true"
       >
-        <a-plane
-          id="portalBorderPlane"
-          width="1.8"
-          height="2.9"
-          position="0 0 0.02"
-          material="color: #9fe4ff; transparent: true; opacity: 0.12; emissive: #8fe8ff; emissiveIntensity: 0.35"
-        ></a-plane>
+        <a-cylinder
+          position="0 -1.46 0"
+          radius="0.84"
+          height="0.22"
+          color="#08111d"
+          material="emissive: #16324f; emissiveIntensity: 0.26"
+        ></a-cylinder>
+
+        <a-box
+          position="0 0 0"
+          width="1.9"
+          height="3.22"
+          depth="0.22"
+          color="#07101a"
+          material="opacity: 0.52; transparent: true; emissive: #071a2a; emissiveIntensity: 0.18"
+        ></a-box>
+
+        <a-box
+          position="-0.92 0 0.12"
+          width="0.08"
+          height="3.12"
+          depth="0.3"
+          color="#c9f4ff"
+          material="emissive: #6ed8ff; emissiveIntensity: 0.46; opacity: 0.82; transparent: true"
+        ></a-box>
+        <a-box
+          position="0.92 0 0.12"
+          width="0.08"
+          height="3.12"
+          depth="0.3"
+          color="#c9f4ff"
+          material="emissive: #6ed8ff; emissiveIntensity: 0.46; opacity: 0.82; transparent: true"
+        ></a-box>
+
+        <a-entity
+          class="portal-rim"
+          geometry="primitive: torus; radius: 1.14; radiusTubular: 0.038"
+          position="0 0 0.18"
+          scale="0.74 1.21 0.74"
+          rotation="0 0 90"
+          material="color: #84ddff; emissive: #6ed8ff; emissiveIntensity: 0.46; opacity: 0.42; transparent: true"
+        ></a-entity>
+
+        <a-entity
+          class="portal-rim"
+          geometry="primitive: torus; radius: 1.34; radiusTubular: 0.016"
+          position="0 0 0.14"
+          scale="0.76 1.34 0.76"
+          rotation="0 0 90"
+          material="color: #d1f3ff; emissive: #b3ebff; emissiveIntensity: 0.28; opacity: 0.2; transparent: true"
+          animation="property: rotation; to: 0 0 450; dur: 24000; loop: true; easing: linear"
+        ></a-entity>
 
         <a-plane
-          id="portalCorePlane"
-          width="1.46"
+          class="portal-core"
+          width="1.34"
           height="2.54"
-          position="0 0 0.05"
-          material="color: #081a2a; transparent: true; opacity: 0.32; emissive: #67e8f9; emissiveIntensity: 0.35"
+          position="0 0 0.07"
+          material="color: #06111d; transparent: true; opacity: 0.68; emissive: #15324f; emissiveIntensity: 0.34"
         ></a-plane>
 
         <a-plane
-          id="portalImagePlane"
-          width="1.3"
-          height="2.35"
-          position="0 0 0.07"
-          material="src: #portalMuseumImage; shader: flat; transparent: true; opacity: 0; emissive: #cffafe; emissiveIntensity: 0.08"
+          class="portal-veil"
+          width="1.22"
+          height="2.34"
+          position="0 0 0.1"
+          material="color: #87e3ff; transparent: true; opacity: 0.1; emissive: #6ed8ff; emissiveIntensity: 0.38"
+          animation="property: rotation; to: 0 0 3; dur: 4600; easing: easeInOutSine; dir: alternate; loop: true"
         ></a-plane>
 
-        <a-entity position="0 0 0.085" scale="1 1.28 1" rotation="0 0 0">
-          <a-entity
-            geometry="primitive: ring; radiusInner: 0.62; radiusOuter: 0.70"
-            material="color: #7dd3fc; transparent: true; opacity: 0.35; side: double"
-            animation__rippleScale1="property: scale; from: 0.92 0.92 0.92; to: 1.1 1.1 1.1; dur: 2800; easing: easeOutQuad; loop: true"
-            animation__rippleOpacity1="property: material.opacity; from: 0.35; to: 0; dur: 2800; easing: easeOutQuad; loop: true"
-          ></a-entity>
+        <a-plane
+          class="portal-preview"
+          width="1.18"
+          height="2.18"
+          position="0 0 0.11"
+          material="src: #portalMuseumImage; shader: flat; transparent: true; opacity: 0.18"
+        ></a-plane>
 
-          <a-entity
-            geometry="primitive: ring; radiusInner: 0.62; radiusOuter: 0.70"
-            material="color: #7dd3fc; transparent: true; opacity: 0.35; side: double"
-            animation__rippleScale2="property: scale; from: 0.92 0.92 0.92; to: 1.1 1.1 1.1; dur: 2800; easing: easeOutQuad; delay: 1200; loop: true"
-            animation__rippleOpacity2="property: material.opacity; from: 0.35; to: 0; dur: 2800; easing: easeOutQuad; delay: 1200; loop: true"
-          ></a-entity>
+        <a-entity position="0 0 0.16">
+          <a-ring
+            class="portal-rim"
+            radius-inner="0.44"
+            radius-outer="0.52"
+            color="#9ce6ff"
+            material="transparent: true; opacity: 0.28; emissive: #7adfff; emissiveIntensity: 0.4"
+            animation="property: scale; from: 0.72 1.02 1; to: 1.06 1.22 1; dur: 3200; easing: easeOutQuad; loop: true"
+          ></a-ring>
+          <a-ring
+            class="portal-rim"
+            radius-inner="0.44"
+            radius-outer="0.52"
+            color="#9ce6ff"
+            material="transparent: true; opacity: 0.24; emissive: #7adfff; emissiveIntensity: 0.34"
+            animation="property: scale; from: 0.72 1.02 1; to: 1.06 1.22 1; dur: 3200; easing: easeOutQuad; delay: 1400; loop: true"
+          ></a-ring>
         </a-entity>
 
         <a-plane
-          id="portalHitbox"
-          class="clickable"
-          width="1.3"
-          height="2.35"
-          position="0 0 0.06"
+          class="portal-hitbox clickable"
+          width="1.2"
+          height="2.16"
+          position="0 0 0.12"
           material="transparent: true; opacity: 0.001"
         ></a-plane>
 
-        <a-entity
-          id="portalLabel3d"
-          position="0 -1.85 0.12"
-          scale="1.4 1.4 1.4"
-        >
-          <a-text
-            value="Portfolio Museum"
-            position="0 0 0"
-            align="center"
-            color="#ecfeff"
-            width="2.9"
-            lineHeight="55"
-            material="emissive: #cffafe; emissiveIntensity: 0.6"
-            shader="msdf"
-            font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
-            font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
-          ></a-text>
+        <a-light
+          class="portal-light"
+          type="point"
+          color="#75dbff"
+          intensity="0.7"
+          distance="7"
+          position="0 0.6 1.4"
+        ></a-light>
 
-          <a-text
-            value="Enter Portal"
-            position="0 -0.38 0"
-            align="center"
-            color="#cffafe"
-            width="2.1"
-            lineHeight="55"
-            material="emissive: #cffafe; emissiveIntensity: 0.28"
-            shader="msdf"
-            font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
-            font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
-          ></a-text>
-        </a-entity>
+        <a-text
+          class="portal-caption"
+          value="Portfolio Museum"
+          position="0 -2.02 0.16"
+          align="center"
+          color="#d8ebff"
+          width="3.35"
+          material="emissive: #b9efff; emissiveIntensity: 0.44"
+          shader="msdf"
+          font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
+          font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
+        ></a-text>
+
+        <a-text
+          class="portal-caption"
+          value="Curated work in a luminous gallery"
+          position="0 -2.34 0.16"
+          align="center"
+          color="#b9d8f1"
+          width="2.56"
+        ></a-text>
       </a-entity>
 
-      <a-entity id="rig" position="0 0 2">
+      <a-entity
+        id="resumePortal"
+        portal-interaction="targetUrl: resume/resume.html"
+        position="1.85 2.05 -5.55"
+        rotation="0 -7 0"
+        animation__float="property: position; from: 1.85 2.01 -5.55; to: 1.85 2.09 -5.55; dur: 4200; easing: easeInOutSine; dir: alternate; loop: true; delay: 520"
+      >
+        <a-cylinder
+          position="0 -1.46 0"
+          radius="0.84"
+          height="0.22"
+          color="#08111d"
+          material="emissive: #2a2f56; emissiveIntensity: 0.26"
+        ></a-cylinder>
+
+        <a-box
+          position="0 0 0"
+          width="1.9"
+          height="3.22"
+          depth="0.22"
+          color="#08101c"
+          material="opacity: 0.52; transparent: true; emissive: #101833; emissiveIntensity: 0.18"
+        ></a-box>
+
+        <a-box
+          position="-0.92 0 0.12"
+          width="0.08"
+          height="3.12"
+          depth="0.3"
+          color="#e0ebff"
+          material="emissive: #9bb0ff; emissiveIntensity: 0.38; opacity: 0.82; transparent: true"
+        ></a-box>
+        <a-box
+          position="0.92 0 0.12"
+          width="0.08"
+          height="3.12"
+          depth="0.3"
+          color="#e0ebff"
+          material="emissive: #9bb0ff; emissiveIntensity: 0.38; opacity: 0.82; transparent: true"
+        ></a-box>
+
+        <a-entity
+          class="portal-rim"
+          geometry="primitive: torus; radius: 1.14; radiusTubular: 0.038"
+          position="0 0 0.18"
+          scale="0.74 1.21 0.74"
+          rotation="0 0 90"
+          material="color: #b0c4ff; emissive: #90a8ff; emissiveIntensity: 0.46; opacity: 0.42; transparent: true"
+        ></a-entity>
+
+        <a-entity
+          class="portal-rim"
+          geometry="primitive: torus; radius: 1.34; radiusTubular: 0.016"
+          position="0 0 0.14"
+          scale="0.76 1.34 0.76"
+          rotation="0 0 90"
+          material="color: #e2ecff; emissive: #b7c6ff; emissiveIntensity: 0.24; opacity: 0.18; transparent: true"
+          animation="property: rotation; to: 0 0 450; dur: 26000; loop: true; easing: linear"
+        ></a-entity>
+
+        <a-plane
+          class="portal-core"
+          width="1.34"
+          height="2.54"
+          position="0 0 0.07"
+          material="color: #070f1d; transparent: true; opacity: 0.68; emissive: #242f57; emissiveIntensity: 0.34"
+        ></a-plane>
+
+        <a-plane
+          class="portal-veil"
+          width="1.22"
+          height="2.34"
+          position="0 0 0.1"
+          material="color: #b6c7ff; transparent: true; opacity: 0.1; emissive: #96a9ff; emissiveIntensity: 0.38"
+          animation="property: rotation; to: 0 0 -3; dur: 4600; easing: easeInOutSine; dir: alternate; loop: true"
+        ></a-plane>
+
+        <a-plane
+          class="portal-preview"
+          width="1.18"
+          height="2.18"
+          position="0 0 0.11"
+          material="src: #portalResumeImage; shader: flat; transparent: true; opacity: 0.18"
+        ></a-plane>
+
+        <a-entity position="0 0 0.16">
+          <a-ring
+            class="portal-rim"
+            radius-inner="0.44"
+            radius-outer="0.52"
+            color="#c8d6ff"
+            material="transparent: true; opacity: 0.26; emissive: #a3b5ff; emissiveIntensity: 0.38"
+            animation="property: scale; from: 0.72 1.02 1; to: 1.06 1.22 1; dur: 3400; easing: easeOutQuad; loop: true"
+          ></a-ring>
+          <a-ring
+            class="portal-rim"
+            radius-inner="0.44"
+            radius-outer="0.52"
+            color="#c8d6ff"
+            material="transparent: true; opacity: 0.22; emissive: #a3b5ff; emissiveIntensity: 0.32"
+            animation="property: scale; from: 0.72 1.02 1; to: 1.06 1.22 1; dur: 3400; easing: easeOutQuad; delay: 1500; loop: true"
+          ></a-ring>
+        </a-entity>
+
+        <a-plane
+          class="portal-hitbox clickable"
+          width="1.2"
+          height="2.16"
+          position="0 0 0.12"
+          material="transparent: true; opacity: 0.001"
+        ></a-plane>
+
+        <a-light
+          class="portal-light"
+          type="point"
+          color="#99adff"
+          intensity="0.7"
+          distance="7"
+          position="0 0.6 1.4"
+        ></a-light>
+
+        <a-text
+          class="portal-caption"
+          value="Resume Archive"
+          position="0 -2.02 0.16"
+          align="center"
+          color="#d8ebff"
+          width="3.35"
+          material="emissive: #dce7ff; emissiveIntensity: 0.32"
+          shader="msdf"
+          font="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.json"
+          font-image="https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png"
+        ></a-text>
+
+        <a-text
+          class="portal-caption"
+          value="An immersive professional timeline"
+          position="0 -2.34 0.16"
+          align="center"
+          color="#b9d8f1"
+          width="2.56"
+        ></a-text>
+      </a-entity>
+
+      <a-entity id="rig" position="0 0 1.4">
         <a-camera wasd-controls look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
-            fuse-timeout="1100"
-            color="#d4a24f"
+            fuse-timeout="1050"
+            color="#9de7ff"
             raycaster="objects: .clickable"
           ></a-cursor>
         </a-camera>
       </a-entity>
+
       <a-entity
-        id="leftController"
         laser-controls="hand: left"
-        raycaster="objects: .clickable; far: 12"
-        line="color: #cffafe; opacity: 0.85"
+        raycaster="objects: .clickable; far: 14"
+        line="color: #c7efff; opacity: 0.75"
       ></a-entity>
 
       <a-entity
-        id="rightController"
         laser-controls="hand: right"
-        raycaster="objects: .clickable; far: 12"
-        line="color: #cffafe; opacity: 0.85"
+        raycaster="objects: .clickable; far: 14"
+        line="color: #c7efff; opacity: 0.75"
       ></a-entity>
     </a-scene>
   </body>
