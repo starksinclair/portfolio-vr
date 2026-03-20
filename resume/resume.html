@@ -8,22 +8,31 @@
     <link rel="stylesheet" href="resume.css" />
   </head>
   <body>
+    <div id="bootScreen" class="boot-screen">
+      <div class="boot-panel">
+        <span class="eyebrow">Stationary Resume Mode</span>
+        <h1>Preparing The Carousel</h1>
+        <p>Loading a rotating archive built for seated and standing users.</p>
+      </div>
+    </div>
+
     <div class="resume-shell">
       <div class="topbar">
         <div class="glass-panel intro-panel">
           <span class="eyebrow">Professional Archive</span>
           <h1>Resume Observatory</h1>
           <p>
-            A spatial walkthrough of experience, skills, projects, and academic
-            milestones inside the same celestial system as the museum.
+            The resume is now arranged as a stationary carousel. Rotate in place
+            or use the section controls to bring each archive node in front of
+            you.
           </p>
         </div>
 
         <div class="glass-panel utility-panel">
           <a class="ghost-link" href="../index.html">Return Home</a>
           <p>
-            Desktop: drag to look, use WASD to drift, or use the navigation
-            controls. VR gaze and controller rays can activate project cards.
+            No walking is required. Use gaze, controller rays, or the next and
+            previous buttons to rotate the archive around you.
           </p>
         </div>
       </div>
@@ -34,8 +43,8 @@
         <div class="panel-kicker" id="panelKicker">Overview</div>
         <h2 id="panelTitle">Welcome</h2>
         <p id="panelContent">
-          Moving through the archive reveals a focused narrative instead of a
-          flat document.
+          The archive rotates around a fixed viewer instead of moving the viewer
+          through the scene.
         </p>
       </aside>
 
@@ -64,23 +73,19 @@
 
     <a-scene
       background="color: #030711"
-      fog="type: exponential; color: #04101b; density: 0.018"
-      renderer="colorManagement: true; physicallyCorrectLights: true"
+      fog="type: exponential; color: #04101b; density: 0.016"
+      renderer="colorManagement: true; physicallyCorrectLights: false"
       vr-mode-ui="enabled: true"
     >
       <a-assets>
         <img id="resumeSky" src="../assets/images/sky.jpeg" alt="" />
-        <img id="eng104-img" src="https://i.ibb.co/gZc447VZ/ENG104-Monster.png" alt="" />
-        <img id="corpstube-img" src="https://i.ibb.co/VcZPb1St/Corpstube.png" alt="" />
-        <img id="corpsify-img" src="https://i.ibb.co/MDCT4fM1/corpsify.png" alt="" />
-        <img id="saintly-img" src="https://via.placeholder.com/400x300?text=Saintly" alt="" />
       </a-assets>
 
       <a-sky src="#resumeSky" rotation="0 -90 0"></a-sky>
       <a-entity id="resumeWorld"></a-entity>
 
-      <a-entity id="rig" position="0 0 6">
-        <a-camera wasd-controls look-controls position="0 1.6 0">
+      <a-entity id="rig" position="0 0 0">
+        <a-camera look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
             fuse-timeout="1100"

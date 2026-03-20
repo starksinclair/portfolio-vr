@@ -11,15 +11,12 @@
       :root {
         --bg-void: #030711;
         --bg-panel: rgba(7, 15, 27, 0.82);
-        --bg-panel-strong: rgba(7, 15, 27, 0.92);
         --line-soft: rgba(150, 208, 255, 0.14);
         --line-strong: rgba(194, 234, 255, 0.28);
         --text-primary: #ecf6ff;
         --text-muted: rgba(209, 227, 247, 0.72);
         --accent-cyan: #7adfff;
         --accent-ice: #c7efff;
-        --accent-violet: #95a7ff;
-        --danger: rgba(255, 184, 184, 0.84);
       }
 
       * {
@@ -42,17 +39,24 @@
         inset: 0;
       }
 
-      .hud {
+      .boot-screen {
         position: fixed;
-        inset: 1rem 1rem auto 1rem;
-        z-index: 10;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        pointer-events: none;
+        inset: 0;
+        z-index: 30;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at center, rgba(133, 221, 255, 0.08), transparent 28%),
+          rgba(3, 7, 17, 0.94);
+        transition: opacity 420ms ease, visibility 420ms ease;
       }
 
+      .boot-screen.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .boot-panel,
       .glass-panel {
         border: 1px solid var(--line-soft);
         background:
@@ -64,17 +68,34 @@
         backdrop-filter: blur(18px);
       }
 
+      .boot-panel {
+        width: min(30rem, calc(100vw - 2rem));
+        padding: 1rem 1.1rem 1.05rem;
+        text-align: center;
+      }
+
+      .hud {
+        position: fixed;
+        inset: 1rem 1rem auto 1rem;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        pointer-events: none;
+      }
+
       .brand-panel,
       .utility-panel {
         padding: 1rem 1.1rem;
       }
 
       .brand-panel {
-        width: min(28rem, calc(100vw - 2rem));
+        width: min(29rem, calc(100vw - 2rem));
       }
 
       .utility-panel {
-        width: min(23rem, calc(100vw - 2rem));
+        width: min(24rem, calc(100vw - 2rem));
       }
 
       .eyebrow {
@@ -86,6 +107,7 @@
         text-transform: uppercase;
       }
 
+      .boot-panel h1,
       .brand-panel h1,
       .panel-title {
         margin: 0;
@@ -94,11 +116,13 @@
         letter-spacing: 0.03em;
       }
 
+      .boot-panel h1,
       .brand-panel h1 {
         font-size: clamp(2rem, 3.5vw, 3rem);
         line-height: 0.94;
       }
 
+      .boot-panel p,
       .brand-panel p,
       .utility-panel p,
       .section p,
@@ -148,11 +172,6 @@
         border-color: rgba(199, 239, 255, 0.46);
         background: rgba(122, 223, 255, 0.08);
         color: var(--text-primary);
-      }
-
-      .action-link {
-        width: 100%;
-        margin-top: 1rem;
       }
 
       .detail-panel {
@@ -241,6 +260,11 @@
         background: rgba(122, 223, 255, 0.08);
       }
 
+      .action-link {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
       .fallback {
         position: fixed;
         left: 50%;
@@ -259,84 +283,14 @@
         display: block;
       }
 
-      .veil-transition {
-        position: fixed;
-        inset: 0;
-        z-index: 18;
-        background:
-          radial-gradient(circle at center, rgba(133, 221, 255, 0.08), transparent 30%),
-          linear-gradient(180deg, rgba(3, 7, 17, 0.2), rgba(3, 7, 17, 0.92));
-        opacity: 1;
-        pointer-events: none;
-        transition: opacity 880ms ease;
-      }
-
-      .veil-transition.is-clearing {
-        opacity: 0;
-      }
-
-      .veil-cloud {
-        position: absolute;
-        border-radius: 999px;
-        background: radial-gradient(
-          circle at 32% 40%,
-          rgba(255, 255, 255, 0.86),
-          rgba(205, 236, 255, 0.62) 48%,
-          rgba(117, 187, 255, 0.18) 72%,
-          transparent 80%
-        );
-        filter: blur(18px);
-        animation: drift 7s ease-in-out infinite;
-      }
-
-      .veil-a {
-        width: 380px;
-        height: 210px;
-        left: 6%;
-        top: 12%;
-      }
-
-      .veil-b {
-        width: 340px;
-        height: 200px;
-        right: 10%;
-        top: 16%;
-        animation-delay: 0.8s;
-      }
-
-      .veil-c {
-        width: 420px;
-        height: 220px;
-        left: 18%;
-        bottom: 8%;
-        animation-delay: 1.3s;
-      }
-
-      .veil-d {
-        width: 360px;
-        height: 210px;
-        right: 16%;
-        bottom: 7%;
-        animation-delay: 1.7s;
-      }
-
-      @keyframes drift {
-        0%,
-        100% {
-          transform: translate3d(0, 0, 0) scale(1);
-        }
-        50% {
-          transform: translate3d(16px, -8px, 0) scale(1.04);
-        }
-      }
-
       @media (max-width: 980px) {
         .hud {
           flex-direction: column;
         }
 
         .brand-panel,
-        .utility-panel {
+        .utility-panel,
+        .boot-panel {
           width: auto;
         }
 
@@ -357,20 +311,22 @@
     </style>
   </head>
   <body>
-    <div id="veilTransition" class="veil-transition">
-      <div class="veil-cloud veil-a"></div>
-      <div class="veil-cloud veil-b"></div>
-      <div class="veil-cloud veil-c"></div>
-      <div class="veil-cloud veil-d"></div>
+    <div id="bootScreen" class="boot-screen">
+      <div class="boot-panel">
+        <span class="eyebrow">Stationary Gallery</span>
+        <h1>Assembling The Museum Ring</h1>
+        <p>Loading a no-locomotion exhibit orbit with lighter scene-side assets.</p>
+      </div>
     </div>
 
     <div class="hud">
       <div class="glass-panel brand-panel">
-        <span class="eyebrow">Luminous Gallery</span>
+        <span class="eyebrow">Stationary Luminous Gallery</span>
         <h1>Portfolio Museum</h1>
         <p>
-          A restrained archive of selected work staged as illuminated exhibits
-          inside a cosmic hall.
+          This scene is built for a stationary viewer. The exhibits now orbit
+          your field of view, so you can inspect the archive by rotating in
+          place instead of walking.
         </p>
       </div>
 
@@ -379,9 +335,8 @@
           <a class="ghost-link" href="../index.html">Return Home</a>
         </div>
         <p>
-          Desktop: drag to look, use WASD to move, and click any framed
-          installation. VR gaze and controller rays target the glowing media
-          planes.
+          Look around the ring to find projects. Click an installation to load
+          its details, or use the in-world home portal to leave the museum.
         </p>
       </div>
     </div>
@@ -397,8 +352,8 @@
       <div id="panelContent">
         <div class="section">
           <p class="empty-state">
-            Step into any installation to load the project narrative, decisions,
-            and build details here.
+            The archive now wraps around you. Look across the ring and open any
+            project to inspect the process and outcomes.
           </p>
         </div>
       </div>
@@ -424,8 +379,8 @@
 
     <a-scene
       background="color: #030711"
-      fog="type: exponential; color: #04101b; density: 0.02"
-      renderer="colorManagement: true; physicallyCorrectLights: true"
+      fog="type: exponential; color: #04101b; density: 0.016"
+      renderer="colorManagement: true; physicallyCorrectLights: false"
       vr-mode-ui="enabled: true"
     >
       <a-assets>
@@ -433,11 +388,10 @@
       </a-assets>
 
       <a-sky src="#museumSky" rotation="0 -90 0"></a-sky>
-
       <a-entity id="museumRoot"></a-entity>
 
-      <a-entity id="rig" position="0 0 4">
-        <a-camera wasd-controls look-controls position="0 1.6 0">
+      <a-entity id="rig" position="0 0 0">
+        <a-camera look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
             fuse-timeout="1100"
@@ -474,7 +428,13 @@
       const closePanel = document.getElementById("closePanel");
       const externalLink = document.getElementById("externalLink");
       const fallback = document.getElementById("fallback");
-      const veilTransition = document.getElementById("veilTransition");
+      const bootScreen = document.getElementById("bootScreen");
+
+      const focusState = {
+        titleText: null,
+        metaText: null,
+        accentRing: null,
+      };
 
       function createElement(tag, attrs = {}) {
         const el = document.createElement(tag);
@@ -493,7 +453,19 @@
         });
       }
 
-      function addMuseumShell() {
+      function getProjectAccent(project) {
+        if (project.category.includes("FULL STACK")) {
+          return { accent: "#95a7ff", edge: "#c8d6ff" };
+        }
+
+        if (project.category.includes("OTHER")) {
+          return { accent: "#c7efff", edge: "#e3f6ff" };
+        }
+
+        return { accent: "#7adfff", edge: "#c7efff" };
+      }
+
+      function addShell() {
         museumRoot.appendChild(
           createElement("a-light", {
             type: "ambient",
@@ -514,199 +486,190 @@
         museumRoot.appendChild(
           createElement("a-light", {
             type: "directional",
-            intensity: "0.16",
+            intensity: "0.18",
             color: "#95a7ff",
-            position: "4 5 -6",
+            position: "4 5 -4",
           }),
         );
 
         museumRoot.appendChild(
-          createElement("a-plane", {
-            rotation: "-90 0 0",
-            position: "0 -0.18 -30",
-            width: "28",
-            height: "78",
+          createElement("a-cylinder", {
+            position: "0 -0.18 -2.8",
+            radius: "8.4",
+            height: "0.34",
             color: "#040a13",
-            material: "metalness: 0.08; roughness: 0.92",
+            material: "metalness: 0.08; roughness: 0.9",
           }),
         );
 
         museumRoot.appendChild(
-          createElement("a-plane", {
+          createElement("a-ring", {
+            position: "0 0.01 -2.8",
             rotation: "-90 0 0",
-            position: "0 -0.08 -30",
-            width: "8.6",
-            height: "76",
-            color: "#08121f",
+            "radius-inner": "4.2",
+            "radius-outer": "5.15",
+            color: "#071120",
             material:
-              "emissive: #0c2134; emissiveIntensity: 0.14; opacity: 0.9; transparent: true",
+              "emissive: #3cbcff; emissiveIntensity: 0.24; opacity: 0.78; transparent: true",
           }),
         );
 
         museumRoot.appendChild(
-          createElement("a-plane", {
+          createElement("a-ring", {
+            position: "0 0.02 -2.8",
             rotation: "-90 0 0",
-            position: "0 -0.07 -30",
-            width: "0.18",
-            height: "76",
+            "radius-inner": "1.8",
+            "radius-outer": "1.94",
             color: "#c7efff",
             material:
-              "emissive: #7adfff; emissiveIntensity: 0.86; opacity: 0.82; transparent: true",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-box", {
-            position: "-11 3.25 -30",
-            width: "0.3",
-            height: "6.5",
-            depth: "78",
-            color: "#050d16",
-            material:
-              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-box", {
-            position: "11 3.25 -30",
-            width: "0.3",
-            height: "6.5",
-            depth: "78",
-            color: "#050d16",
-            material:
-              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-box", {
-            position: "0 6.45 -30",
-            width: "16.4",
-            height: "0.22",
-            depth: "78",
-            color: "#050d16",
-            material:
-              "opacity: 0.42; transparent: true; emissive: #061426; emissiveIntensity: 0.08",
-          }),
-        );
-
-        for (let i = 0; i < 8; i += 1) {
-          const z = -7 - i * 8.5;
-
-          museumRoot.appendChild(
-            createElement("a-box", {
-              position: "-8.1 3.1 " + z,
-              width: "0.14",
-              height: "3.9",
-              depth: "0.16",
-              color: "#d2f3ff",
-              material:
-                "emissive: #7adfff; emissiveIntensity: 0.54; opacity: 0.76; transparent: true",
-            }),
-          );
-
-          museumRoot.appendChild(
-            createElement("a-box", {
-              position: "8.1 3.1 " + z,
-              width: "0.14",
-              height: "3.9",
-              depth: "0.16",
-              color: "#d2f3ff",
-              material:
-                "emissive: #7adfff; emissiveIntensity: 0.54; opacity: 0.76; transparent: true",
-            }),
-          );
-
-          museumRoot.appendChild(
-            createElement("a-entity", {
-              geometry: "primitive: torus; radius: 5.2; radiusTubular: 0.018",
-              position: "0 5.15 " + z,
-              rotation: "0 0 90",
-              scale: "1 0.56 1",
-              material:
-                "color: #9fe7ff; emissive: #7adfff; emissiveIntensity: 0.28; opacity: 0.22; transparent: true",
-            }),
-          );
-        }
-
-        museumRoot.appendChild(
-          createElement("a-box", {
-            position: "0 4.15 -63",
-            width: "8",
-            height: "7.2",
-            depth: "0.3",
-            color: "#040b14",
-            material:
-              "opacity: 0.5; transparent: true; emissive: #081728; emissiveIntensity: 0.16",
+              "emissive: #7adfff; emissiveIntensity: 0.72; opacity: 0.84; transparent: true",
           }),
         );
 
         museumRoot.appendChild(
           createElement("a-entity", {
-            geometry: "primitive: torus; radius: 2.6; radiusTubular: 0.04",
-            position: "0 4.2 -62.7",
+            geometry: "primitive: torus; radius: 2.26; radiusTubular: 0.05",
+            position: "0 2.8 -3.8",
+            scale: "1 1.28 1",
             rotation: "0 0 90",
-            scale: "1 1.3 1",
             material:
-              "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.44; opacity: 0.34; transparent: true",
+              "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.42; opacity: 0.32; transparent: true",
             animation:
-              "property: rotation; to: 0 0 450; dur: 30000; loop: true; easing: linear",
+              "property: rotation; to: 0 0 450; dur: 26000; loop: true; easing: linear",
           }),
         );
 
         museumRoot.appendChild(
-          createText({
-            value: "Project Archive",
-            position: "0 6.15 -62.2",
-            align: "center",
-            color: "#ecf6ff",
-            width: "8.6",
-            material: "emissive: #d6efff; emissiveIntensity: 0.24",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createText({
-            value: "A calm axial gallery for selected builds",
-            position: "0 5.5 -62.2",
-            align: "center",
-            color: "#a9c9df",
-            width: "5.1",
-          }),
-        );
-
-        museumRoot.appendChild(
-          createElement("a-plane", {
-            position: "0 4.15 -6.2",
-            width: "6.2",
-            height: "2.2",
-            color: "#06101a",
+          createElement("a-box", {
+            position: "0 2.76 -4.9",
+            width: "5.8",
+            height: "4.5",
+            depth: "0.26",
+            color: "#050d16",
             material:
-              "opacity: 0.56; transparent: true; emissive: #0a1a29; emissiveIntensity: 0.16",
+              "opacity: 0.48; transparent: true; emissive: #071829; emissiveIntensity: 0.14",
           }),
         );
 
+        focusState.titleText = createText({
+          value: "Portfolio Museum",
+          position: "0 4.18 -4.2",
+          align: "center",
+          color: "#ecf6ff",
+          width: "6.6",
+          material: "emissive: #d8f2ff; emissiveIntensity: 0.24",
+        });
+        museumRoot.appendChild(focusState.titleText);
+
+        focusState.metaText = createText({
+          value: "Stationary exhibit orbit",
+          position: "0 3.56 -4.1",
+          align: "center",
+          color: "#a9c9df",
+          width: "4.2",
+        });
+        museumRoot.appendChild(focusState.metaText);
+
+        focusState.accentRing = createElement("a-entity", {
+          geometry: "primitive: torus; radius: 0.84; radiusTubular: 0.03",
+          position: "0 1.56 -3.56",
+          rotation: "0 0 90",
+          scale: "1 1.2 1",
+          material:
+            "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.38; opacity: 0.3; transparent: true",
+          animation:
+            "property: rotation; to: 0 0 450; dur: 22000; loop: true; easing: linear",
+        });
+        museumRoot.appendChild(focusState.accentRing);
+
         museumRoot.appendChild(
-          createText({
-            value: "Portfolio Museum",
-            position: "0 4.55 -6",
-            align: "center",
-            color: "#ecf6ff",
-            width: "7.4",
-            material: "emissive: #d6efff; emissiveIntensity: 0.26",
+          createElement("a-box", {
+            position: "0 0.96 -3.56",
+            width: "2.4",
+            height: "0.08",
+            depth: "2.4",
+            color: "#07101a",
+            material:
+              "emissive: #122338; emissiveIntensity: 0.16; opacity: 0.84; transparent: true",
+          }),
+        );
+      }
+
+      function addHomePortal() {
+        const portal = createElement("a-entity", {
+          position: "-3.95 1.4 -2.4",
+          rotation: "0 26 0",
+        });
+
+        const ring = createElement("a-entity", {
+          geometry: "primitive: torus; radius: 0.72; radiusTubular: 0.04",
+          position: "0 0 0.12",
+          scale: "0.82 1.24 0.82",
+          rotation: "0 0 90",
+          material:
+            "color: #c7efff; emissive: #7adfff; emissiveIntensity: 0.44; opacity: 0.42; transparent: true",
+        });
+        portal.appendChild(ring);
+
+        portal.appendChild(
+          createElement("a-plane", {
+            position: "0 0 0.04",
+            width: "0.92",
+            height: "1.46",
+            color: "#06111d",
+            material:
+              "transparent: true; opacity: 0.68; emissive: #15324f; emissiveIntensity: 0.28",
           }),
         );
 
-        museumRoot.appendChild(
-          createText({
-            value: "Each installation reveals process, constraints, and outcomes.",
-            position: "0 3.95 -6",
-            align: "center",
-            color: "#a9c9df",
-            width: "4.8",
-          }),
-        );
+        const hitbox = createElement("a-plane", {
+          class: "clickable",
+          position: "0 0 0.08",
+          width: "0.84",
+          height: "1.3",
+          material: "transparent: true; opacity: 0.001",
+        });
+        portal.appendChild(hitbox);
+
+        const title = createText({
+          value: "Home",
+          position: "0 -1.08 0.12",
+          align: "center",
+          color: "#ecf6ff",
+          width: "1.9",
+        });
+        portal.appendChild(title);
+
+        const meta = createText({
+          value: "Return portal",
+          position: "0 -1.34 0.12",
+          align: "center",
+          color: "#a9c9df",
+          width: "1.4",
+        });
+        portal.appendChild(meta);
+
+        hitbox.addEventListener("mouseenter", () => {
+          portal.setAttribute(
+            "animation__hover",
+            "property: scale; to: 1.05 1.05 1.05; dur: 220; easing: easeInOutCubic",
+          );
+          ring.setAttribute("material", "emissiveIntensity", 0.8);
+        });
+
+        hitbox.addEventListener("mouseleave", () => {
+          portal.setAttribute(
+            "animation__hover",
+            "property: scale; to: 1 1 1; dur: 220; easing: easeInOutCubic",
+          );
+          ring.setAttribute("material", "emissiveIntensity", 0.44);
+        });
+
+        hitbox.addEventListener("click", () => {
+          window.location.href = "../index.html";
+        });
+
+        museumRoot.appendChild(portal);
       }
 
       function buildListSection(title, items) {
@@ -734,7 +697,19 @@
         return section;
       }
 
+      function updateFocus(project, accent) {
+        focusState.titleText.setAttribute("value", project.title);
+        focusState.metaText.setAttribute(
+          "value",
+          `${project.category} / ${project.status}`,
+        );
+        focusState.accentRing.setAttribute("material", "color", accent.edge);
+        focusState.accentRing.setAttribute("material", "emissive", accent.accent);
+      }
+
       function openProject(project) {
+        const accent = getProjectAccent(project);
+        updateFocus(project, accent);
         panelTitle.textContent = project.title;
         panelMeta.textContent = `${project.category} / ${project.status}`;
         panelContent.innerHTML = "";
@@ -785,198 +760,154 @@
         detailPanel.classList.add("is-visible");
       }
 
-      function buildExhibit(project, index) {
-        const side = index % 2 === 0 ? -1 : 1;
-        const row = Math.floor(index / 2);
-        const x = side * 6.1;
-        const z = -12 - row * 8.2;
-        const rotationY = side < 0 ? 12 : -12;
-        const accent = side < 0 ? "#7adfff" : "#c7efff";
-        const edge = side < 0 ? "#9de7ff" : "#95a7ff";
+      function buildExhibit(project, index, total) {
+        const startAngle = -102;
+        const endAngle = 102;
+        const angle =
+          total === 1
+            ? 0
+            : startAngle + ((endAngle - startAngle) * index) / (total - 1);
+        const rad = (angle * Math.PI) / 180;
+        const radius = 5.6;
+        const centerZ = -2.6;
+        const x = Math.sin(rad) * radius;
+        const z = centerZ - Math.cos(rad) * radius;
+        const accent = getProjectAccent(project);
 
         const exhibit = createElement("a-entity", {
           position: `${x} 0 ${z}`,
-          rotation: `0 ${rotationY} 0`,
+          rotation: `0 ${-angle} 0`,
         });
-
-        const base = createElement("a-cylinder", {
-          radius: "1.4",
-          height: "0.24",
-          position: "0 0.12 0.05",
-          color: "#07101a",
-          material: "emissive: #122338; emissiveIntensity: 0.16",
-        });
-        exhibit.appendChild(base);
 
         exhibit.appendChild(
-          createElement("a-ring", {
-            rotation: "-90 0 0",
-            position: "0 0.14 0.05",
-            "radius-inner": "0.92",
-            "radius-outer": "1.26",
-            color: "#091421",
-            material: `emissive: ${accent}; emissiveIntensity: 0.34; opacity: 0.84; transparent: true`,
+          createElement("a-cylinder", {
+            radius: "0.94",
+            height: "0.24",
+            position: "0 0.12 0",
+            color: "#07101a",
+            material: `emissive: ${accent.accent}; emissiveIntensity: 0.16`,
           }),
         );
 
-        exhibit.appendChild(
-          createElement("a-box", {
-            position: "0 2.65 -0.42",
-            width: "3.7",
-            height: "4.7",
-            depth: "0.22",
-            color: "#050d16",
-            material:
-              "opacity: 0.56; transparent: true; emissive: #071829; emissiveIntensity: 0.18",
-          }),
-        );
+        const frame = createElement("a-box", {
+          position: "0 2.1 -0.2",
+          width: "2.28",
+          height: "3.28",
+          depth: "0.18",
+          color: "#050d16",
+          material:
+            "opacity: 0.58; transparent: true; emissive: #071829; emissiveIntensity: 0.14",
+        });
+        exhibit.appendChild(frame);
 
         const halo = createElement("a-entity", {
-          class: "exhibit-halo",
-          geometry: "primitive: torus; radius: 1.65; radiusTubular: 0.03",
-          position: "0 2.9 -0.2",
+          geometry: "primitive: torus; radius: 1.02; radiusTubular: 0.03",
+          position: "0 2.22 -0.06",
           rotation: "0 0 90",
-          scale: "0.98 1.38 0.98",
-          material: `color: ${edge}; emissive: ${accent}; emissiveIntensity: 0.38; opacity: 0.34; transparent: true`,
+          scale: "1 1.28 1",
+          material: `color: ${accent.edge}; emissive: ${accent.accent}; emissiveIntensity: 0.34; opacity: 0.3; transparent: true`,
         });
         exhibit.appendChild(halo);
 
         exhibit.appendChild(
-          createElement("a-box", {
-            position: "-1.46 2.7 -0.1",
-            width: "0.08",
-            height: "4.1",
-            depth: "0.22",
-            color: "#d8f6ff",
-            material: `emissive: ${accent}; emissiveIntensity: 0.44; opacity: 0.82; transparent: true`,
-          }),
-        );
-
-        exhibit.appendChild(
-          createElement("a-box", {
-            position: "1.46 2.7 -0.1",
-            width: "0.08",
-            height: "4.1",
-            depth: "0.22",
-            color: "#d8f6ff",
-            material: `emissive: ${accent}; emissiveIntensity: 0.44; opacity: 0.82; transparent: true`,
-          }),
-        );
-
-        const mediaFrame = createElement("a-plane", {
-          class: "exhibit-frame",
-          position: "0 3.02 0.02",
-          width: "2.3",
-          height: "3.15",
-          color: "#07101a",
-          material: `opacity: 0.82; transparent: true; emissive: ${accent}; emissiveIntensity: 0.16`,
-        });
-        exhibit.appendChild(mediaFrame);
-
-        exhibit.appendChild(
           createElement("a-plane", {
-            position: "0 3.02 0.06",
-            width: "2.04",
-            height: "2.6",
-            src: project.thumbnail,
-            material: "shader: flat",
+            position: "0 2.14 0.05",
+            width: "1.64",
+            height: "2.12",
+            color: "#07111d",
+            material: `opacity: 0.86; transparent: true; emissive: ${accent.accent}; emissiveIntensity: 0.08`,
           }),
         );
 
-        const mediaVeil = createElement("a-plane", {
-          class: "exhibit-veil",
-          position: "0 3.02 0.08",
-          width: "2.04",
-          height: "2.6",
-          color: accent,
-          material: `opacity: 0.08; transparent: true; emissive: ${accent}; emissiveIntensity: 0.34`,
+        const innerVeil = createElement("a-plane", {
+          position: "0 2.14 0.08",
+          width: "1.42",
+          height: "1.86",
+          color: accent.accent,
+          material: `opacity: 0.08; transparent: true; emissive: ${accent.accent}; emissiveIntensity: 0.24`,
         });
-        exhibit.appendChild(mediaVeil);
+        exhibit.appendChild(innerVeil);
+
+        exhibit.appendChild(
+          createText({
+            value: project.title,
+            position: "0 3.26 0.08",
+            align: "center",
+            color: "#ecf6ff",
+            width: "2.9",
+            material: "emissive: #d8f2ff; emissiveIntensity: 0.16",
+          }),
+        );
+
+        exhibit.appendChild(
+          createText({
+            value: project.category,
+            position: "0 2.72 0.08",
+            align: "center",
+            color: accent.accent,
+            width: "2.15",
+          }),
+        );
+
+        exhibit.appendChild(
+          createText({
+            value: project.technologies.slice(0, 3).join(" / "),
+            position: "0 1.24 0.1",
+            align: "center",
+            color: "#a9c9df",
+            width: "1.9",
+          }),
+        );
+
+        exhibit.appendChild(
+          createElement("a-box", {
+            position: "0 2.12 0.14",
+            width: "0.18",
+            height: "1.12",
+            depth: "0.05",
+            color: accent.edge,
+            material: `emissive: ${accent.accent}; emissiveIntensity: 0.64; opacity: 0.82; transparent: true`,
+          }),
+        );
 
         const hitbox = createElement("a-plane", {
-          class: "clickable exhibit-hitbox",
-          position: "0 3.02 0.11",
-          width: "2.06",
-          height: "2.6",
-          color: "#ffffff",
-          material: "opacity: 0.001; transparent: true",
+          class: "clickable",
+          position: "0 2.14 0.12",
+          width: "1.44",
+          height: "1.9",
+          material: "transparent: true; opacity: 0.001",
         });
         exhibit.appendChild(hitbox);
 
-        exhibit.appendChild(
-          createElement("a-plane", {
-            position: "0 1.42 0.66",
-            rotation: "-68 0 0",
-            width: "2.04",
-            height: "0.62",
-            color: "#06101a",
-            material: `opacity: 0.92; transparent: true; emissive: ${edge}; emissiveIntensity: 0.12`,
-          }),
-        );
-
-        const titleText = createText({
-          value: project.title,
-          position: "0 1.56 0.3",
-          align: "center",
-          color: "#ecf6ff",
-          width: "3.1",
-          material: "emissive: #d8f2ff; emissiveIntensity: 0.2",
-        });
-        exhibit.appendChild(titleText);
-
-        const metaText = createText({
-          value: project.category,
-          position: "0 1.18 0.36",
-          align: "center",
-          color: accent,
-          width: "2.4",
-        });
-        exhibit.appendChild(metaText);
-
-        const exhibitLight = createElement("a-light", {
-          class: "exhibit-light",
+        const light = createElement("a-light", {
           type: "point",
-          color: accent,
-          intensity: "0.65",
-          distance: "8",
-          position: "0 3.5 1.6",
+          color: accent.accent,
+          intensity: "0.58",
+          distance: "6.5",
+          position: "0 2.3 1.1",
         });
-        exhibit.appendChild(exhibitLight);
-
-        const beacon = createElement("a-box", {
-          position: "0 5.2 -0.12",
-          width: "0.34",
-          height: "0.14",
-          depth: "0.34",
-          color: edge,
-          material: `emissive: ${accent}; emissiveIntensity: 0.94`,
-        });
-        exhibit.appendChild(beacon);
+        exhibit.appendChild(light);
 
         hitbox.addEventListener("mouseenter", () => {
           exhibit.setAttribute(
             "animation__hover",
-            "property: scale; to: 1.025 1.025 1.025; dur: 260; easing: easeInOutCubic",
+            "property: scale; to: 1.04 1.04 1.04; dur: 220; easing: easeInOutCubic",
           );
-          halo.setAttribute("material", "emissiveIntensity", 0.7);
+          halo.setAttribute("material", "emissiveIntensity", 0.76);
           halo.setAttribute("material", "opacity", 0.56);
-          mediaFrame.setAttribute("material", "emissiveIntensity", 0.34);
-          mediaVeil.setAttribute("material", "opacity", 0.18);
-          exhibitLight.setAttribute("intensity", 1.1);
-          titleText.setAttribute("color", "#f7fbff");
+          innerVeil.setAttribute("material", "opacity", 0.18);
+          light.setAttribute("intensity", 1.06);
         });
 
         hitbox.addEventListener("mouseleave", () => {
           exhibit.setAttribute(
             "animation__hover",
-            "property: scale; to: 1 1 1; dur: 260; easing: easeInOutCubic",
+            "property: scale; to: 1 1 1; dur: 220; easing: easeInOutCubic",
           );
-          halo.setAttribute("material", "emissiveIntensity", 0.38);
-          halo.setAttribute("material", "opacity", 0.34);
-          mediaFrame.setAttribute("material", "emissiveIntensity", 0.16);
-          mediaVeil.setAttribute("material", "opacity", 0.08);
-          exhibitLight.setAttribute("intensity", 0.65);
-          titleText.setAttribute("color", "#ecf6ff");
+          halo.setAttribute("material", "emissiveIntensity", 0.34);
+          halo.setAttribute("material", "opacity", 0.3);
+          innerVeil.setAttribute("material", "opacity", 0.08);
+          light.setAttribute("intensity", 0.58);
         });
 
         hitbox.addEventListener("click", () => {
@@ -987,7 +918,8 @@
       }
 
       async function loadProjects() {
-        addMuseumShell();
+        addShell();
+        addHomePortal();
 
         try {
           const response = await fetch("../data.json", {
@@ -1000,7 +932,7 @@
 
           const projects = await response.json();
           projects.forEach((project, index) => {
-            buildExhibit(project, index);
+            buildExhibit(project, index, projects.length);
           });
 
           if (projects[0]) {
@@ -1008,31 +940,10 @@
           }
         } catch (error) {
           fallback.classList.add("is-visible");
-
-          museumRoot.appendChild(
-            createElement("a-plane", {
-              position: "0 3.2 -8",
-              width: "8",
-              height: "2.8",
-              color: "#220d12",
-              material: "opacity: 0.9; transparent: true",
-            }),
-          );
-
-          museumRoot.appendChild(
-            createText({
-              value:
-                "Portfolio data failed to load.\nServe this folder over HTTP and reload.",
-              position: "0 3.3 -7.82",
-              align: "center",
-              color: "#ffe2e2",
-              width: "8.5",
-            }),
-          );
         } finally {
           window.setTimeout(() => {
-            veilTransition.classList.add("is-clearing");
-          }, 160);
+            bootScreen.classList.add("is-hidden");
+          }, 260);
         }
       }
 
