@@ -419,15 +419,15 @@
       <!-- Same spatial stereo bed as index (no voiceover) -->
       <a-entity
         position="-2.6 1.6 0.2"
-        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.05; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.75; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
       ></a-entity>
       <a-entity
         position="2.6 1.6 0.2"
-        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.10; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.8; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
       ></a-entity>
       <a-entity id="museumRoot"></a-entity>
 
-      <a-entity id="rig" position="0 0 0">
+      <!-- <a-entity id="rig" position="0 0 0">
         <a-camera look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
@@ -436,7 +436,7 @@
             raycaster="objects: .clickable"
           ></a-cursor>
         </a-camera>
-      </a-entity>
+      </a-entity> -->
 
       <a-entity
         laser-controls="hand: left"

@@ -407,16 +407,16 @@
       <!-- Spatial mix: left / right ambients + close behind voice (whisper) -->
       <a-entity
         position="-2.6 1.6 0.2"
-        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.05; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.4; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
       ></a-entity>
       <a-entity
         position="2.6 1.6 0.2"
-        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.10; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.4; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
       ></a-entity>
       <!-- Slightly behind and beside the head for a close “whisper” image -->
       <a-entity
-        position="0.42 1.58 0.92"
-        sound="src: #ambientVoiceBehind; autoplay: true; loop: false; volume: 0.4; positional: true; refDistance: 0.28; rolloffFactor: 1.5; distanceModel: inverse"
+        position="0 1.58 -0.8"
+        sound="src: #ambientVoiceBehind; autoplay: true; loop: false; volume: 0.9; positional: true; refDistance: 0.28; rolloffFactor: 1.5; distanceModel: inverse"
       ></a-entity>
 
       <a-light type="ambient" intensity="0.38" color="#cadfff"></a-light>
@@ -599,7 +599,7 @@
 
       <a-entity
         id="resumePortal"
-        portal-interaction="targetUrl: resume/resume.html"
+        portal-interaction="targetUrl: resume/resume.html; hoverPreviewSrc: #hoverLoremResume"
         position="2.35 1.92 -4.6"
         rotation="0 -12 0"
         animation__float="property: position; from: 2.35 1.88 -4.6; to: 2.35 1.98 -4.6; dur: 4200; easing: easeInOutSine; dir: alternate; loop: true; delay: 520"
@@ -695,7 +695,7 @@
         ></a-text>
       </a-entity>
 
-      <a-entity id="rig" position="0 0 0">
+      <!-- <a-entity id="rig" position="0 0 0">
         <a-camera look-controls position="0 1.6 0">
           <a-cursor
             fuse="true"
@@ -704,7 +704,7 @@
             raycaster="objects: .clickable"
           ></a-cursor>
         </a-camera>
-      </a-entity>
+      </a-entity> -->
 
       <a-entity
         laser-controls="hand: left"
