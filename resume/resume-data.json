@@ -7,52 +7,87 @@
   },
   "experience": [
     {
-      "id": "corpstube",
-      "title": "Digital Corps Developer Intern",
+      "id": "digital-corps",
+      "title": "Software Engineer",
       "company": "Ball State University - Digital Corps",
-      "duration": "2024 - Present",
-      "description": "Built and maintained custom video streaming platform for university employees. Implemented full-stack features using React and Node.js with complex state management.",
+      "duration": "Sept 2023 - Present",
+      "description": "Collaborate with cross-functional teams to design and build scalable web and mobile applications for university faculty and departments.",
       "highlights": [
-        "Implemented React Context for state management, reducing prop drilling",
-        "Resolved complex re-rendering issues using useEffect hooks",
-        "Built dynamic video player with comment and like functionality",
-        "Created responsive design for multiple screen sizes"
+        "Developed scalable web applications using React and TypeScript in a production environment",
+        "Collaborated with UX designers, PMs, and videographers to deliver user-centered products",
+        "Designed database architecture and implemented secure authentication systems using MySQL and Duo SSO",
+        "Built full-stack features with modern frameworks, improving performance and maintainability"
       ],
-      "technologies": ["React", "Node.js", "API Integration", "CSS"],
+      "technologies": ["React", "TypeScript", "Node.js", "MySQL", "Duo SSO"],
       "position3d": { "x": 0, "y": 2.5, "z": 0 },
       "color": "#7dd3fc"
     },
     {
-      "id": "corpsify",
-      "title": "Junior Web Developer",
-      "company": "Ball State University - Digital Corps",
-      "duration": "2023 - 2024",
-      "description": "Created Corpsify sound search application, my first significant React project. Learned API integration, state management, and debugging with professional mentorship.",
+      "id": "naahia",
+      "title": "Co-Founder & Software Engineer",
+      "company": "Naahia",
+      "duration": "Sept 2024 - Present",
+      "description": "Building a student-focused marketplace platform enabling secure buying, selling, and service exchange within university communities.",
       "highlights": [
-        "First experience with React and modern JavaScript frameworks",
-        "Implemented API integration with comprehensive error handling",
-        "Built search functionality with real-time filtering",
-        "Learned best practices from industry mentors"
+        "Developed mobile application using React Native (Expo) with backend microservices in AdonisJS",
+        "Designed and implemented REST APIs, Docker containerization, and CI/CD pipelines for app deployment",
+        "Integrated Firebase push notifications and AWS SES for real-time communication and email delivery",
+        "Implemented Duo 2FA authentication for secure admin and enterprise-level access control"
       ],
-      "technologies": ["React", "API Integration", "JavaScript", "CSS"],
+      "technologies": [
+        "React Native",
+        "AdonisJS",
+        "Docker",
+        "Firebase",
+        "AWS SES"
+      ],
       "position3d": { "x": -2.5, "y": 2.5, "z": 0.5 },
       "color": "#fbbf24"
     },
     {
-      "id": "saintly",
-      "title": "Freelance Web Developer",
-      "company": "Self-Employed",
-      "duration": "2022 - 2023",
-      "description": "First freelancing project building a website for service offerings. Foundation for understanding web structure, CSS properties, and component reusability.",
+      "id": "data-mine",
+      "title": "Undergraduate Data Science Researcher",
+      "company": "The Data Mine - Purdue University",
+      "duration": "Jul 2024 - Sept 2024",
+      "description": "Worked on energy analytics and forecasting for campus sustainability initiatives.",
       "highlights": [
-        "Developed responsive website layout from ground up",
-        "Learned CSS fundamentals and Bootstrap framework",
-        "Implemented carousel and slider functionality",
-        "Gained experience with scalable layout design"
+        "Contributed to Ball State Energy Dashboard for analyzing and forecasting energy usage",
+        "Built data pipelines and visualization tools for real-world sustainability insights",
+        "Applied data science techniques to support campus-level decision making"
       ],
-      "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
+      "technologies": ["Python", "Data Analysis", "Visualization"],
+      "position3d": { "x": 1.5, "y": 3, "z": -0.5 },
+      "color": "#f87171"
+    },
+    {
+      "id": "basitech",
+      "title": "Software Engineer",
+      "company": "Basitech (EdTech Startup)",
+      "duration": "Jul 2024 - Jan 2025",
+      "description": "Developed and improved a school management system with focus on scalability and maintainability.",
+      "highlights": [
+        "Built student management features and integrated RESTful APIs into production system",
+        "Migrated large React codebase from JavaScript to TypeScript, improving type safety and maintainability",
+        "Collaborated remotely in a fast-paced startup environment"
+      ],
+      "technologies": ["React", "TypeScript", "REST APIs"],
       "position3d": { "x": 2.5, "y": 2.5, "z": 0.5 },
       "color": "#a78bfa"
+    },
+    {
+      "id": "headstarter",
+      "title": "Software Engineer Fellow",
+      "company": "HeadStarter",
+      "duration": "Jul 2024 - Sept 2024",
+      "description": "Built and deployed multiple AI-driven applications in a fast-paced, collaborative environment.",
+      "highlights": [
+        "Developed and deployed live AI projects using React, Next.js, Firebase, Clerk, and Vercel",
+        "Applied agile methodologies and CI/CD practices in rapid development cycles",
+        "Collaborated in high-performance teams to ship production-ready features"
+      ],
+      "technologies": ["React", "Next.js", "Firebase", "Clerk", "Vercel"],
+      "position3d": { "x": -1.5, "y": 3, "z": -0.5 },
+      "color": "#34d399"
     }
   ],
   "education": [
@@ -60,13 +95,26 @@
       "institution": "Ball State University",
       "degree": "Bachelor of Science",
       "field": "Computer Science",
-      "graduation": "Expected 2025",
-      "highlights": [
-        "Recipient of The Builders Scholarship",
-        "Participated in Digital Corps internship program",
-        "Focused on full-stack development and creative computing"
-      ],
+      "graduation": "Expected 2027",
+      "highlights": ["Dean's List", "Senator at SGA", "4.0 GPA"],
       "position3d": { "x": 0, "y": 4.5, "z": -1 }
+    }
+  ],
+  "contact": [
+    {
+      "label": "Email",
+      "value": "sinclairnzenwata@gmail.com",
+      "href": "mailto:sinclairnzenwata@gmail.com"
+    },
+    {
+      "label": "LinkedIn",
+      "value": "linkedin.com/in/sinclair-nzenwata",
+      "href": "https://linkedin.com/in/sinclair-nzenwata"
+    },
+    {
+      "label": "Portfolio",
+      "value": "sinclairnzenwata.com",
+      "href": "https://sinclairnzenwata.com"
     }
   ],
   "skills": {
@@ -91,64 +139,6 @@
       { "name": "Responsive Development", "level": 5, "icon": "⚙️" }
     ]
   },
-  "projects": [
-    {
-      "id": "eng104",
-      "name": "ENG104 Monster",
-      "description": "Interactive timeline exploring monster evolution through media culture",
-      "technologies": ["React", "jsPDF", "JavaScript"],
-      "image": "https://i.ibb.co/gZc447VZ/ENG104-Monster.png",
-      "link": "https://eng104monster.netlify.app",
-      "category": "FRONTEND DEVELOPMENT",
-      "achievements": [
-        "Created engaging interactive timeline",
-        "Implemented PDF export functionality",
-        "Responsive design for all devices"
-      ]
-    },
-    {
-      "id": "corpstube",
-      "name": "Corpstube",
-      "description": "Custom video streaming platform for Ball State Digital Corps",
-      "technologies": ["React", "Node.js", "API Integration"],
-      "image": "https://i.ibb.co/VcZPb1St/Corpstube.png",
-      "link": "https://corptube.netlify.app",
-      "category": "FRONTEND DEVELOPMENT",
-      "achievements": [
-        "Full-stack video platform",
-        "Advanced state management with Context",
-        "Comment and like system"
-      ]
-    },
-    {
-      "id": "corpsify",
-      "name": "Corpsify",
-      "description": "Sound search application with real-time filtering and playback",
-      "technologies": ["React", "API Integration", "Vite"],
-      "image": "https://i.ibb.co/MDCT4fM1/corpsify.png",
-      "link": "https://corpsify.vercel.app",
-      "category": "FRONTEND DEVELOPMENT",
-      "achievements": [
-        "First major React project",
-        "API integration and error handling",
-        "Search and filtering functionality"
-      ]
-    },
-    {
-      "id": "saintly",
-      "name": "Saintly",
-      "description": "Freelance website with modern design and interactive components",
-      "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
-      "image": "https://via.placeholder.com/400x300?text=Saintly+Project",
-      "link": "#",
-      "category": "FRONTEND DEVELOPMENT",
-      "achievements": [
-        "First freelancing project",
-        "Bootstrap implementation",
-        "Carousel and slider components"
-      ]
-    }
-  ],
   "certifications": [
     {
       "name": "The Builders Scholarship",
@@ -161,7 +151,12 @@
   "about": {
     "journey": "From Lagos to Muncie and back, my journey in technology has been shaped by curiosity and a passion for creating experiences that matter. Each project represents a step in my growth as a developer.",
     "philosophy": "I believe in writing code that's not just functional, but beautiful—code that solves real problems and creates lasting value for users.",
-    "interests": ["Web Development", "VR/3D Experiences", "Creative Computing", "User Experience Design", "Open Source"]
+    "interests": [
+      "Web Development",
+      "VR/3D Experiences",
+      "Creative Computing",
+      "User Experience Design",
+      "Open Source"
+    ]
   }
 }
-

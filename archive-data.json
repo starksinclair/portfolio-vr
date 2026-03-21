@@ -1,0 +1,186 @@
+{
+  "identity": {
+    "name": "Sinclair Ihuanyachukwu Nzenwata",
+    "title": "Full Stack Software Engineer | AI Systems Builder",
+    "shortBio": "Full-stack engineer building scalable products and AI-powered systems, with a focus on real-world impact and user-centered design.",
+    "longBio": "I am a full-stack software engineer focused on building scalable systems and intelligent applications that solve real-world problems. My work spans web, mobile, and AI-driven platforms, from multi-agent medical systems to production-ready marketplace infrastructure. I enjoy working at the intersection of system design, product thinking, and emerging technologies, and I am particularly interested in building tools that are both technically robust and meaningful to users.",
+    "location": "Muncie, Indiana, United States"
+  },
+  "contact": [
+    {
+      "label": "Email",
+      "value": "sinclairnzenwata@gmail.com",
+      "href": "mailto:sinclairnzenwata@gmail.com"
+    },
+    {
+      "label": "LinkedIn",
+      "value": "linkedin.com/in/sinclair-nzenwata",
+      "href": "https://linkedin.com/in/sinclair-nzenwata"
+    },
+    {
+      "label": "Portfolio",
+      "value": "sinclairnzenwata.com",
+      "href": "https://sinclairnzenwata.com"
+    }
+  ],
+  "voiceover": {
+    "intro": {
+      "src": "",
+      "title": "Scene 1 Intro",
+      "transcript": [
+        "Welcome. I’m Sinclair Ihuanyachukwu Nzenwata.",
+        "I’m a full-stack software engineer and AI systems builder focused on creating scalable products and intelligent tools with real-world impact.",
+        "My work spans web, mobile, and AI-driven systems, from marketplace infrastructure to multi-agent applications designed around reliability, usability, and meaningful outcomes.",
+        "This space is a simple archive of that work.",
+        "When you’re ready, move into the main room to explore my projects, experience, and background."
+      ]
+    },
+    "archive": {
+      "src": "",
+      "title": "Scene 2 Orientation",
+      "transcript": [
+        "You’re now in the main archive.",
+        "In this space, you can stay centered and explore my work through a rotating experience carousel and a project wall.",
+        "The carousel introduces my background and professional experience.",
+        "The project wall highlights selected systems I’ve designed and built, including AI applications, platform infrastructure, and production-focused software.",
+        "Take your time, look around, and follow the work that interests you."
+      ]
+    }
+  },
+  "experience": [
+    {
+      "id": "digital-corps",
+      "company": "Digital Corps — Ball State University",
+      "role": "Software Engineer",
+      "dates": "Sept 2023 – Present",
+      "summary": "Build and deliver production-grade web and mobile applications for university faculty and stakeholders.",
+      "bullets": [
+        "Developed scalable web applications using React and TypeScript, improving performance and maintainability.",
+        "Designed database architectures and implemented secure authentication systems using MySQL and Duo SSO.",
+        "Collaborated cross-functionally with designers, developers, and product managers to deliver real-world software solutions."
+      ],
+      "tools": ["React", "TypeScript", "MySQL", "Duo SSO"]
+    },
+    {
+      "id": "naahia",
+      "company": "Naahia",
+      "role": "Co-Founder & Software Engineer",
+      "dates": "Sept 2024 – Present",
+      "summary": "Building a full-stack marketplace platform enabling secure buying, selling, and service exchange.",
+      "bullets": [
+        "Architected and developed a mobile-first marketplace using React Native and AdonisJS microservices.",
+        "Implemented REST APIs, Docker-based deployments, and CI/CD pipelines for production readiness.",
+        "Integrated authentication, push notifications, and email systems using Firebase, AWS SES, and Duo 2FA."
+      ],
+      "tools": ["React Native", "AdonisJS", "Docker", "AWS", "Firebase"]
+    },
+    {
+      "id": "basitech",
+      "company": "Basitech",
+      "role": "Software Engineer",
+      "dates": "Jul 2024 – Jan 2025",
+      "summary": "Developed core features for a school management system.",
+      "bullets": [
+        "Built student management interfaces and integrated REST APIs.",
+        "Migrated a large React codebase from JavaScript to TypeScript, improving code quality and safety."
+      ],
+      "tools": ["React", "TypeScript"]
+    },
+    {
+      "id": "headstarter",
+      "company": "HeadStarter",
+      "role": "Software Engineer Fellow",
+      "dates": "Jul 2024 – Sept 2024",
+      "summary": "Built and deployed multiple AI-powered applications in a fast-paced environment.",
+      "bullets": [
+        "Developed and deployed full-stack AI applications using Next.js and Firebase.",
+        "Applied agile workflows and CI/CD practices in collaborative team environments."
+      ],
+      "tools": ["Next.js", "Firebase", "Vercel"]
+    },
+    {
+      "id": "purdue-data-mine",
+      "company": "Purdue Data Mine",
+      "role": "Undergraduate Data Science Researcher",
+      "dates": "Jul 2024 – Sept 2024",
+      "summary": "Worked on energy analytics and forecasting systems.",
+      "bullets": [
+        "Built data pipelines and visualization tools for campus energy analysis.",
+        "Contributed to sustainability-focused analytics dashboards."
+      ],
+      "tools": ["Python", "Data Pipelines", "Visualization"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "healthconnect",
+      "title": "HealthConnect",
+      "subtitle": "Multi-Agent Medical QA System",
+      "summary": "AI-powered system delivering medically grounded answers using multi-agent LLM workflows.",
+      "description": "Built a multi-agent AI system that combines web search and medical literature retrieval to generate accurate, validated responses to user questions.",
+      "role": "Designed and built full system architecture, backend APIs, and agent workflows.",
+      "stack": ["Python", "FastAPI", "MCP", "OpenAI", "Gemini", "PubMed API", "Docker"],
+      "challenge": "Ensuring reliable and accurate responses from multiple LLM agents across different data sources.",
+      "solution": "Implemented structured multi-agent workflows using MCP and integrated PubMed plus web search for grounded responses.",
+      "status": "Live",
+      "externalLink": "https://multi-llm-agent-system.onrender.com",
+      "linkLabel": "Open live system"
+    },
+    {
+      "id": "naahia-project",
+      "title": "Naahia",
+      "subtitle": "Marketplace Platform",
+      "summary": "Full-stack marketplace platform for secure peer-to-peer transactions.",
+      "description": "Building a scalable marketplace that enables users to buy, sell, and offer services with secure authentication and real-time features.",
+      "role": "Co-founder and lead engineer responsible for architecture and development.",
+      "stack": ["React Native", "AdonisJS", "MySQL", "Docker", "Firebase", "AWS"],
+      "challenge": "Designing a scalable and secure system supporting multiple user interactions and services.",
+      "solution": "Implemented modular microservices, authentication layers, and CI/CD pipelines for reliable deployment.",
+      "status": "In Progress",
+      "externalLink": null,
+      "linkLabel": "Private build"
+    },
+    {
+      "id": "admin-moderation",
+      "title": "Admin Moderation System",
+      "subtitle": "Secure Admin Dashboard",
+      "summary": "Secure admin dashboard for managing user reports and platform activity.",
+      "description": "Built a full-featured moderation system with audit logs, real-time filtering, and secure access control.",
+      "role": "Designed and implemented backend and admin workflows.",
+      "stack": ["AdonisJS", "Node.js", "MySQL", "Duo SSO", "Tailwind CSS"],
+      "challenge": "Ensuring secure admin access and maintaining a complete audit trail of actions.",
+      "solution": "Integrated Duo SSO with OIDC and designed normalized schemas for tracking moderation activity.",
+      "status": "Completed",
+      "externalLink": null,
+      "linkLabel": "Internal project"
+    },
+    {
+      "id": "pantry-vision",
+      "title": "Pantry Vision",
+      "subtitle": "AI Pantry Management App",
+      "summary": "AI-powered pantry management app with food recognition and recipe generation.",
+      "description": "Developed a full-stack application allowing users to track food items, scan products with a camera, and generate recipes using AI.",
+      "role": "Built frontend, backend, and AI integration.",
+      "stack": ["Next.js", "Firebase", "Tailwind CSS", "Gemini API"],
+      "challenge": "Integrating AI features and handling image-based input.",
+      "solution": "Used FileReader and Gemini API for image-based queries and AI-generated outputs.",
+      "status": "Live",
+      "externalLink": "https://pantryvision.vercel.app",
+      "linkLabel": "Open live app"
+    },
+    {
+      "id": "will-it-rain",
+      "title": "WillItRain",
+      "subtitle": "NASA Climate Mobile App",
+      "summary": "Mobile app predicting weather patterns using NASA climate data.",
+      "description": "Built during the NASA Space Apps Hackathon to analyze historical climate data and predict weather trends.",
+      "role": "Developed the mobile app and integrated the data analysis workflow.",
+      "stack": ["React Native", "NASA API", "Python"],
+      "challenge": "Working with large climate datasets and extracting meaningful predictions.",
+      "solution": "Used the NASA POWER API and data analysis techniques to generate forecasts.",
+      "status": "Completed",
+      "externalLink": null,
+      "linkLabel": "Hackathon project"
+    }
+  ]
+}

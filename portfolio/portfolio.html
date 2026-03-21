@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio Museum</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <link rel="preload" href="../assets/audio/ambient/space1.mp3" as="audio" />
+    <link rel="preload" href="../assets/audio/ambient/dayOne.mp3" as="audio" />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Space+Grotesk:wght@400;500;600&display=swap");
 
@@ -46,9 +48,15 @@
         display: grid;
         place-items: center;
         background:
-          radial-gradient(circle at center, rgba(133, 221, 255, 0.08), transparent 28%),
+          radial-gradient(
+            circle at center,
+            rgba(133, 221, 255, 0.08),
+            transparent 28%
+          ),
           rgba(3, 7, 17, 0.94);
-        transition: opacity 420ms ease, visibility 420ms ease;
+        transition:
+          opacity 420ms ease,
+          visibility 420ms ease;
       }
 
       .boot-screen.is-hidden {
@@ -314,8 +322,8 @@
     <div id="bootScreen" class="boot-screen">
       <div class="boot-panel">
         <span class="eyebrow">Stationary Gallery</span>
-        <h1>Assembling The Museum Ring</h1>
-        <p>Loading a no-locomotion exhibit orbit with lighter scene-side assets.</p>
+        <h1>Loading The Museum</h1>
+        <p>Preparing exhibits and scene assets.</p>
       </div>
     </div>
 
@@ -324,9 +332,8 @@
         <span class="eyebrow">Stationary Luminous Gallery</span>
         <h1>Portfolio Museum</h1>
         <p>
-          This scene is built for a stationary viewer. The exhibits now orbit
-          your field of view, so you can inspect the archive by rotating in
-          place instead of walking.
+          Built for a stationary viewer: look around the gallery and open any
+          exhibit without walking.
         </p>
       </div>
 
@@ -335,8 +342,8 @@
           <a class="ghost-link" href="../index.html">Return Home</a>
         </div>
         <p>
-          Look around the ring to find projects. Click an installation to load
-          its details, or use the in-world home portal to leave the museum.
+          Browse the exhibits, click one to load details, or use the home portal
+          to return.
         </p>
       </div>
     </div>
@@ -352,8 +359,7 @@
       <div id="panelContent">
         <div class="section">
           <p class="empty-state">
-            The archive now wraps around you. Look across the ring and open any
-            project to inspect the process and outcomes.
+            Select an exhibit to inspect the process and outcomes.
           </p>
         </div>
       </div>
@@ -385,9 +391,40 @@
     >
       <a-assets>
         <img id="museumSky" src="../assets/images/sky.jpeg" alt="" />
+        <audio
+          id="ambientSpaceLeft"
+          class="scene-ambient-audio"
+          src="../assets/audio/ambient/space1.mp3"
+          preload="auto"
+          loop
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="ambientDayRight"
+          class="scene-ambient-audio"
+          src="../assets/audio/ambient/dayOne.mp3"
+          preload="auto"
+          loop
+          crossorigin="anonymous"
+        ></audio>
+        <a-asset-item
+          id="museumSpaceModel"
+          src="../assets/models/space_explorer.glb"
+          response-type="arraybuffer"
+        ></a-asset-item>
       </a-assets>
 
       <a-sky src="#museumSky" rotation="0 -90 0"></a-sky>
+
+      <!-- Same spatial stereo bed as index (no voiceover) -->
+      <a-entity
+        position="-2.6 1.6 0.2"
+        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.05; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
+      <a-entity
+        position="2.6 1.6 0.2"
+        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.10; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
       <a-entity id="museumRoot"></a-entity>
 
       <a-entity id="rig" position="0 0 0">
@@ -430,11 +467,85 @@
       const fallback = document.getElementById("fallback");
       const bootScreen = document.getElementById("bootScreen");
 
+      let uiAudioCtx = null;
+      function getUiAudioContext() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) {
+          return null;
+        }
+        if (!uiAudioCtx) {
+          uiAudioCtx = new AudioCtx();
+        }
+        return uiAudioCtx;
+      }
+
+      function playUiSound(kind) {
+        const ctx = getUiAudioContext();
+        if (!ctx) {
+          return;
+        }
+        if (ctx.state === "suspended") {
+          ctx.resume().catch(() => {});
+        }
+        try {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = kind === "hover" ? "sine" : "triangle";
+          const now = ctx.currentTime;
+          const freq = kind === "hover" ? 720 : 340;
+          const duration = kind === "hover" ? 0.1 : 0.2;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.09, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        } catch (_) {
+          /* ignore */
+        }
+      }
+
+      document.body.addEventListener(
+        "click",
+        () => {
+          const ctx = getUiAudioContext();
+          if (ctx && ctx.state === "suspended") {
+            ctx.resume().catch(() => {});
+          }
+        },
+        { once: true },
+      );
+
       const focusState = {
         titleText: null,
-        metaText: null,
+        descriptionText: null,
         accentRing: null,
       };
+
+      /** Keep long JSON copy readable on the central board (meters-wide plane). */
+      const BOARD_DESC_MAX_CHARS = 380;
+      const BOARD_TITLE_MAX_CHARS = 72;
+
+      function formatBoardTitle(title) {
+        const t = (title || "Untitled").trim();
+        if (t.length <= BOARD_TITLE_MAX_CHARS) {
+          return t;
+        }
+        return `${t.slice(0, BOARD_TITLE_MAX_CHARS - 1)}…`;
+      }
+
+      function formatBoardDescription(raw) {
+        if (raw == null || String(raw).trim() === "") {
+          return "No description provided.";
+        }
+        let t = String(raw).replace(/\s+/g, " ").trim();
+        if (t.length > BOARD_DESC_MAX_CHARS) {
+          t = `${t.slice(0, BOARD_DESC_MAX_CHARS - 1).trim()}…`;
+        }
+        return t;
+      }
 
       function createElement(tag, attrs = {}) {
         const el = document.createElement(tag);
@@ -454,11 +565,12 @@
       }
 
       function getProjectAccent(project) {
-        if (project.category.includes("FULL STACK")) {
+        const cat = project.category || "";
+        if (cat.includes("FULL STACK")) {
           return { accent: "#95a7ff", edge: "#c8d6ff" };
         }
 
-        if (project.category.includes("OTHER")) {
+        if (cat.includes("OTHER")) {
           return { accent: "#c7efff", edge: "#e3f6ff" };
         }
 
@@ -527,21 +639,8 @@
         );
 
         museumRoot.appendChild(
-          createElement("a-entity", {
-            geometry: "primitive: torus; radius: 2.26; radiusTubular: 0.05",
-            position: "0 2.8 -3.8",
-            scale: "1 1.28 1",
-            rotation: "0 0 90",
-            material:
-              "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.42; opacity: 0.32; transparent: true",
-            animation:
-              "property: rotation; to: 0 0 450; dur: 26000; loop: true; easing: linear",
-          }),
-        );
-
-        museumRoot.appendChild(
           createElement("a-box", {
-            position: "0 2.76 -4.9",
+            position: "0 5.3 -4.9",
             width: "5.8",
             height: "4.5",
             depth: "0.26",
@@ -553,32 +652,35 @@
 
         focusState.titleText = createText({
           value: "Portfolio Museum",
-          position: "0 4.18 -4.2",
+          position: "0 6.5 -4.18",
           align: "center",
           color: "#ecf6ff",
-          width: "6.6",
+          width: "5.4",
+          wrapCount: "28",
           material: "emissive: #d8f2ff; emissiveIntensity: 0.24",
         });
         museumRoot.appendChild(focusState.titleText);
 
-        focusState.metaText = createText({
-          value: "Stationary exhibit orbit",
-          position: "0 3.56 -4.1",
+        focusState.descriptionText = createText({
+          value:
+            "Select an exhibit to show its title and description on this board.",
+          position: "0 5.0 -4.18",
           align: "center",
-          color: "#a9c9df",
-          width: "4.2",
+          anchor: "center",
+          color: "#b8d4e8",
+          width: "5.15",
+          wrapCount: "44",
         });
-        museumRoot.appendChild(focusState.metaText);
+        museumRoot.appendChild(focusState.descriptionText);
 
-        focusState.accentRing = createElement("a-entity", {
-          geometry: "primitive: torus; radius: 0.84; radiusTubular: 0.03",
+        focusState.accentRing = createElement("a-ring", {
           position: "0 1.56 -3.56",
-          rotation: "0 0 90",
-          scale: "1 1.2 1",
+          rotation: "-90 0 0",
+          "radius-inner": "0.76",
+          "radius-outer": "0.94",
+          color: "#9de7ff",
           material:
-            "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.38; opacity: 0.3; transparent: true",
-          animation:
-            "property: rotation; to: 0 0 450; dur: 22000; loop: true; easing: linear",
+            "transparent: true; opacity: 0.42; emissive: #7adfff; emissiveIntensity: 0.42",
         });
         museumRoot.appendChild(focusState.accentRing);
 
@@ -593,6 +695,14 @@
               "emissive: #122338; emissiveIntensity: 0.16; opacity: 0.84; transparent: true",
           }),
         );
+
+        museumRoot.appendChild(
+          createElement("a-entity", {
+            position: "0 0.96 -3",
+            scale: "0.007 0.007 0.007",
+            "gltf-model": "#museumSpaceModel",
+          }),
+        );
       }
 
       function addHomePortal() {
@@ -601,13 +711,14 @@
           rotation: "0 26 0",
         });
 
-        const ring = createElement("a-entity", {
-          geometry: "primitive: torus; radius: 0.72; radiusTubular: 0.04",
+        const ring = createElement("a-ring", {
           position: "0 0 0.12",
-          scale: "0.82 1.24 0.82",
-          rotation: "0 0 90",
+          rotation: "-90 0 0",
+          "radius-inner": "0.52",
+          "radius-outer": "0.72",
+          color: "#c7efff",
           material:
-            "color: #c7efff; emissive: #7adfff; emissiveIntensity: 0.44; opacity: 0.42; transparent: true",
+            "transparent: true; opacity: 0.42; emissive: #7adfff; emissiveIntensity: 0.44",
         });
         portal.appendChild(ring);
 
@@ -618,7 +729,7 @@
             height: "1.46",
             color: "#06111d",
             material:
-              "transparent: true; opacity: 0.68; emissive: #15324f; emissiveIntensity: 0.28",
+              "transparent: true; opacity: 0.68; emissive: #ba0c2f; emissiveIntensity: 0.28",
           }),
         );
 
@@ -627,7 +738,7 @@
           position: "0 0 0.08",
           width: "0.84",
           height: "1.3",
-          material: "transparent: true; opacity: 0.001",
+          material: "transparent: true; opacity: 0.01",
         });
         portal.appendChild(hitbox);
 
@@ -650,6 +761,7 @@
         portal.appendChild(meta);
 
         hitbox.addEventListener("mouseenter", () => {
+          playUiSound("hover");
           portal.setAttribute(
             "animation__hover",
             "property: scale; to: 1.05 1.05 1.05; dur: 220; easing: easeInOutCubic",
@@ -698,13 +810,20 @@
       }
 
       function updateFocus(project, accent) {
-        focusState.titleText.setAttribute("value", project.title);
-        focusState.metaText.setAttribute(
+        focusState.titleText.setAttribute(
           "value",
-          `${project.category} / ${project.status}`,
+          formatBoardTitle(project.title),
+        );
+        focusState.descriptionText.setAttribute(
+          "value",
+          formatBoardDescription(project.description),
         );
         focusState.accentRing.setAttribute("material", "color", accent.edge);
-        focusState.accentRing.setAttribute("material", "emissive", accent.accent);
+        focusState.accentRing.setAttribute(
+          "material",
+          "emissive",
+          accent.accent,
+        );
       }
 
       function openProject(project) {
@@ -728,14 +847,15 @@
 
         const techWrap = document.createElement("div");
         techWrap.className = "chips";
-        (Array.isArray(project.technologies) ? project.technologies : []).forEach(
-          (tech) => {
-            const chip = document.createElement("span");
-            chip.className = "chip";
-            chip.textContent = tech;
-            techWrap.appendChild(chip);
-          },
-        );
+        (Array.isArray(project.technologies)
+          ? project.technologies
+          : []
+        ).forEach((tech) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = tech;
+          techWrap.appendChild(chip);
+        });
         overview.appendChild(techWrap);
 
         panelContent.appendChild(overview);
@@ -800,12 +920,13 @@
         });
         exhibit.appendChild(frame);
 
-        const halo = createElement("a-entity", {
-          geometry: "primitive: torus; radius: 1.02; radiusTubular: 0.03",
+        const halo = createElement("a-ring", {
           position: "0 2.22 -0.06",
-          rotation: "0 0 90",
-          scale: "1 1.28 1",
-          material: `color: ${accent.edge}; emissive: ${accent.accent}; emissiveIntensity: 0.34; opacity: 0.3; transparent: true`,
+          rotation: "-90 0 0",
+          "radius-inner": "0.88",
+          "radius-outer": "1.06",
+          color: accent.edge,
+          material: `transparent: true; opacity: 0.34; emissive: ${accent.accent}; emissiveIntensity: 0.38`,
         });
         exhibit.appendChild(halo);
 
@@ -839,15 +960,15 @@
           }),
         );
 
-        exhibit.appendChild(
-          createText({
-            value: project.category,
-            position: "0 2.72 0.08",
-            align: "center",
-            color: accent.accent,
-            width: "2.15",
-          }),
-        );
+        // exhibit.appendChild(
+        //   createText({
+        //     value: project.category,
+        //     position: "0 2.72 0.08",
+        //     align: "center",
+        //     color: accent.accent,
+        //     width: "2",
+        //   }),
+        // );
 
         exhibit.appendChild(
           createText({
@@ -859,16 +980,27 @@
           }),
         );
 
-        exhibit.appendChild(
-          createElement("a-box", {
-            position: "0 2.12 0.14",
-            width: "0.18",
-            height: "1.12",
-            depth: "0.05",
-            color: accent.edge,
-            material: `emissive: ${accent.accent}; emissiveIntensity: 0.64; opacity: 0.82; transparent: true`,
-          }),
-        );
+        const thumbPlane = createElement("a-plane", {
+          position: "0 2.12 0.16",
+          width: "1.12",
+          height: "0.7",
+        });
+        if (project.thumbnail) {
+          thumbPlane.setAttribute("material", {
+            src: project.thumbnail,
+            shader: "flat",
+            transparent: true,
+            opacity: 0.96,
+          });
+        } else {
+          thumbPlane.setAttribute("material", {
+            color: "#0b1624",
+            shader: "flat",
+            transparent: true,
+            opacity: 0.92,
+          });
+        }
+        exhibit.appendChild(thumbPlane);
 
         const hitbox = createElement("a-plane", {
           class: "clickable",
@@ -889,6 +1021,7 @@
         exhibit.appendChild(light);
 
         hitbox.addEventListener("mouseenter", () => {
+          playUiSound("hover");
           exhibit.setAttribute(
             "animation__hover",
             "property: scale; to: 1.04 1.04 1.04; dur: 220; easing: easeInOutCubic",
@@ -904,8 +1037,8 @@
             "animation__hover",
             "property: scale; to: 1 1 1; dur: 220; easing: easeInOutCubic",
           );
-          halo.setAttribute("material", "emissiveIntensity", 0.34);
-          halo.setAttribute("material", "opacity", 0.3);
+          // halo.setAttribute("material", "emissiveIntensity", 0.34);
+          // halo.setAttribute("material", "opacity", 0.3);
           innerVeil.setAttribute("material", "opacity", 0.08);
           light.setAttribute("intensity", 0.58);
         });
@@ -949,6 +1082,12 @@
 
       closePanel.addEventListener("click", () => {
         detailPanel.classList.remove("is-visible");
+      });
+
+      document.querySelectorAll(".ghost-link, .close-btn").forEach((el) => {
+        el.addEventListener("mouseenter", () => {
+          playUiSound("hover");
+        });
       });
 
       loadProjects();

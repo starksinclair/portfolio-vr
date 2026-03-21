@@ -1,0 +1,325 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Space+Grotesk:wght@400;500;600&display=swap");
+
+:root {
+  --bg-void: #090b08;
+  --bg-panel: rgba(18, 20, 17, 0.78);
+  --bg-panel-strong: rgba(16, 18, 15, 0.9);
+  --line-soft: rgba(196, 185, 158, 0.14);
+  --line-strong: rgba(208, 186, 137, 0.34);
+  --text-primary: #efebe2;
+  --text-secondary: rgba(223, 216, 204, 0.78);
+  --accent-warm: #d0b683;
+  --accent-soft: #aeb9a2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+a-scene {
+  position: fixed;
+  inset: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.028), transparent 30%),
+    radial-gradient(circle at 82% 10%, rgba(255, 255, 255, 0.018), transparent 26%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 5px);
+  mix-blend-mode: soft-light;
+  opacity: 0.34;
+}
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at center, rgba(208, 182, 131, 0.08), transparent 28%),
+    rgba(9, 11, 8, 0.94);
+  transition: opacity 360ms ease, visibility 360ms ease;
+}
+
+.boot-screen.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.boot-panel,
+.glass-panel,
+.bottom-note,
+.transcript-panel {
+  border: 1px solid var(--line-soft);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
+    var(--bg-panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 26px 84px rgba(3, 4, 3, 0.44);
+  backdrop-filter: blur(16px);
+}
+
+.boot-panel {
+  width: min(32rem, calc(100vw - 2rem));
+  padding: 1.1rem 1.15rem;
+  text-align: center;
+}
+
+.shell {
+  position: fixed;
+  inset: 1rem 1rem 1rem 1rem;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.brand-panel,
+.utility-panel {
+  padding: 1rem 1.1rem 1.05rem;
+}
+
+.brand-panel {
+  width: min(34rem, calc(100vw - 2rem));
+}
+
+.utility-panel {
+  width: min(30rem, calc(100vw - 2rem));
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 0.55rem;
+  color: var(--accent-soft);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.boot-panel h1,
+.brand-panel h1,
+.transcript-header h2 {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 0.92;
+}
+
+.boot-panel h1,
+.brand-panel h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+}
+
+.brand-panel h2 {
+  margin: 0.55rem 0 0;
+  color: var(--accent-soft);
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.boot-panel p,
+.brand-panel p,
+.utility-panel p,
+.bottom-note p,
+.transcript-body p {
+  margin: 0.65rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.72;
+}
+
+.meta-row,
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  pointer-events: auto;
+}
+
+.meta-row span,
+.contact-link {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(228, 221, 207, 0.76);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.contact-link:hover {
+  border-color: rgba(208, 186, 137, 0.4);
+  background: rgba(62, 55, 40, 0.56);
+  color: var(--text-primary);
+}
+
+.focus-kicker {
+  color: var(--accent-soft);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.focus-label {
+  margin-top: 0.35rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+  pointer-events: auto;
+}
+
+.ghost-button,
+.ghost-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--line-strong);
+  background: rgba(23, 24, 20, 0.84);
+  color: #ebdfc4;
+  text-decoration: none;
+  font: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.ghost-button:hover,
+.ghost-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(208, 186, 137, 0.56);
+  background: rgba(62, 55, 40, 0.76);
+  color: var(--text-primary);
+}
+
+.ghost-link-disabled {
+  opacity: 0.44;
+  pointer-events: none;
+}
+
+.bottom-note {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  width: min(30rem, calc(100vw - 2rem));
+  padding: 0.95rem 1.05rem;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.transcript-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 32;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(6, 7, 6, 0.72);
+}
+
+.transcript-panel {
+  width: min(38rem, calc(100vw - 2rem));
+  max-height: min(78vh, 44rem);
+  padding: 1rem 1.05rem;
+  overflow-y: auto;
+  background: var(--bg-panel-strong);
+}
+
+.transcript-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.transcript-header h2 {
+  font-size: 2rem;
+}
+
+.transcript-body {
+  margin-top: 0.9rem;
+}
+
+.transcript-body p:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 1120px) {
+  .topbar {
+    flex-direction: column;
+  }
+
+  .brand-panel,
+  .utility-panel,
+  .boot-panel {
+    width: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    inset: 0.75rem;
+  }
+
+  .action-row {
+    flex-direction: column;
+  }
+
+  .ghost-button,
+  .ghost-link {
+    width: 100%;
+  }
+
+  .bottom-note {
+    width: calc(100vw - 1.5rem);
+    bottom: 0.75rem;
+  }
+}

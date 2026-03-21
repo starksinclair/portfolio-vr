@@ -6,8 +6,16 @@
     <title>Celestial Archive Portal</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <link rel="preload" href="assets/images/sky1.jpg" as="image" />
-    <link rel="preload" href="assets/images/lagos-close-detail.jpg" as="image" />
-    <link rel="preload" href="assets/images/ball-state-bell-tower-sky-view.jpg" as="image" />
+    <link
+      rel="preload"
+      href="assets/images/lagos-close-detail.jpg"
+      as="image"
+    />
+    <link
+      rel="preload"
+      href="assets/images/ball-state-bell-tower-sky-view.jpg"
+      as="image"
+    />
     <link rel="prefetch" href="portfolio/portfolio.html" />
     <link rel="prefetch" href="resume/resume.html" />
     <link rel="prefetch" href="data.json" as="fetch" crossorigin="anonymous" />
@@ -17,6 +25,9 @@
       as="fetch"
       crossorigin="anonymous"
     />
+    <link rel="preload" href="assets/audio/ambient/space1.mp3" as="audio" />
+    <link rel="preload" href="assets/audio/ambient/dayOne.mp3" as="audio" />
+    <link rel="preload" href="assets/audio/voiceover/vscene-0.m4a" as="audio" />
     <link rel="stylesheet" href="home.css" />
   </head>
   <body>
@@ -54,7 +65,9 @@
       </div>
 
       <div class="glass-panel guide-panel">
-        <a class="ghost-link" href="portfolio/portfolio.html">Open museum directly</a>
+        <a class="ghost-link" href="portfolio/portfolio.html"
+          >Open museum directly</a
+        >
         <p>
           Desktop: drag to look and click a gateway. VR: rotate in place and use
           gaze or controller rays. No walking is required anywhere in the flow.
@@ -64,25 +77,83 @@
 
     <div class="scene-note">
       <span class="eyebrow">Stationary Portal Chamber</span>
-      <p>Two dimensional gateways framed around a seated-friendly central focus.</p>
+      <p>
+        Two dimensional gateways framed around a seated-friendly central focus.
+      </p>
     </div>
 
     <script>
       const bootScreen = document.getElementById("bootScreen");
 
+      let uiAudioCtx = null;
+      function getUiAudioContext() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) {
+          return null;
+        }
+        if (!uiAudioCtx) {
+          uiAudioCtx = new AudioCtx();
+        }
+        return uiAudioCtx;
+      }
+
+      function playUiSound(kind) {
+        const ctx = getUiAudioContext();
+        if (!ctx) {
+          return;
+        }
+        if (ctx.state === "suspended") {
+          ctx.resume().catch(() => {});
+        }
+        try {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = kind === "hover" ? "sine" : "triangle";
+          const now = ctx.currentTime;
+          const freq = kind === "hover" ? 720 : 340;
+          const duration = kind === "hover" ? 0.1 : 0.2;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.09, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        } catch (_) {
+          /* ignore */
+        }
+      }
+
+      document.body.addEventListener(
+        "click",
+        () => {
+          const ctx = getUiAudioContext();
+          if (ctx && ctx.state === "suspended") {
+            ctx.resume().catch(() => {});
+          }
+        },
+        { once: true },
+      );
+
       AFRAME.registerComponent("portal-interaction", {
         schema: {
           targetUrl: { type: "string" },
           transitionSelector: { type: "string", default: "#nebulaTransition" },
-          ambientAudioSelector: { type: "string", default: "#ambientSound" },
+          ambientAudioSelector: {
+            type: "string",
+            default: "audio.scene-ambient-audio",
+          },
         },
 
         init: function () {
           this.isTransitioning = false;
-          this.transitionEl = document.querySelector(this.data.transitionSelector);
-          this.ambientAudio = document.querySelector(
-            this.data.ambientAudioSelector,
+          this.transitionEl = document.querySelector(
+            this.data.transitionSelector,
           );
+          this.ambientAudios = [
+            ...document.querySelectorAll(this.data.ambientAudioSelector),
+          ];
           this.basePosition = AFRAME.utils.coordinates.parse(
             this.el.getAttribute("position"),
           );
@@ -132,6 +203,7 @@
         },
 
         onMouseEnter: function () {
+          playUiSound("hover");
           this.prefetchData();
           this.syncPortalState("hover");
         },
@@ -220,23 +292,29 @@
         },
 
         fadeAmbientOut: function (duration = 820) {
-          if (!this.ambientAudio) {
+          if (!this.ambientAudios || this.ambientAudios.length === 0) {
             return;
           }
 
-          const startVolume = this.ambientAudio.volume || 0.18;
+          const startVolumes = this.ambientAudios.map(
+            (audio) => audio.volume ?? 0.2,
+          );
           const startTime = performance.now();
 
           const step = (now) => {
             const progress = Math.min((now - startTime) / duration, 1);
-            this.ambientAudio.volume = startVolume * (1 - progress);
+            this.ambientAudios.forEach((audio, index) => {
+              audio.volume = startVolumes[index] * (1 - progress);
+            });
 
             if (progress < 1) {
               requestAnimationFrame(step);
               return;
             }
 
-            this.ambientAudio.pause();
+            this.ambientAudios.forEach((audio) => {
+              audio.pause();
+            });
           };
 
           requestAnimationFrame(step);
@@ -268,6 +346,11 @@
       });
 
       window.addEventListener("load", () => {
+        document.querySelectorAll(".ghost-link").forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            playUiSound("hover");
+          });
+        });
         window.setTimeout(() => {
           bootScreen.classList.add("is-hidden");
         }, 320);
@@ -295,17 +378,45 @@
           alt=""
         />
         <audio
-          id="ambientSound"
-          src="assets/audio/ambient/dayOne.mp3"
-          preload="metadata"
+          id="ambientSpaceLeft"
+          class="scene-ambient-audio"
+          src="assets/audio/ambient/space1.mp3"
+          preload="auto"
           loop
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="ambientDayRight"
+          class="scene-ambient-audio"
+          src="assets/audio/ambient/dayOne.mp3"
+          preload="auto"
+          loop
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="ambientVoiceBehind"
+          class="scene-ambient-audio"
+          src="assets/audio/voiceover/vscene-0.m4a"
+          preload="auto"
+          crossorigin="anonymous"
         ></audio>
       </a-assets>
 
       <a-sky src="#lagosPanorama" rotation="0 -90 0"></a-sky>
 
+      <!-- Spatial mix: left / right ambients + close behind voice (whisper) -->
       <a-entity
-        sound="src: #ambientSound; autoplay: true; loop: true; volume: 0.18"
+        position="-2.6 1.6 0.2"
+        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.05; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
+      <a-entity
+        position="2.6 1.6 0.2"
+        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.10; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
+      <!-- Slightly behind and beside the head for a close “whisper” image -->
+      <a-entity
+        position="0.42 1.58 0.92"
+        sound="src: #ambientVoiceBehind; autoplay: true; loop: false; volume: 0.4; positional: true; refDistance: 0.28; rolloffFactor: 1.5; distanceModel: inverse"
       ></a-entity>
 
       <a-light type="ambient" intensity="0.38" color="#cadfff"></a-light>
@@ -348,23 +459,6 @@
           color="#d3f1ff"
           material="emissive: #7adfff; emissiveIntensity: 0.72; opacity: 0.88; transparent: true"
         ></a-ring>
-
-        <a-entity
-          geometry="primitive: torus; radius: 2.5; radiusTubular: 0.05"
-          position="0 2.55 -5.35"
-          scale="1 1.22 1"
-          rotation="0 0 90"
-          material="color: #9ae8ff; emissive: #6ed8ff; emissiveIntensity: 0.38; opacity: 0.34; transparent: true"
-          animation="property: rotation; to: 0 0 450; dur: 26000; loop: true; easing: linear"
-        ></a-entity>
-
-        <a-entity
-          geometry="primitive: torus; radius: 3.18; radiusTubular: 0.016"
-          position="0 2.55 -5.55"
-          scale="1 1.34 1"
-          rotation="0 0 90"
-          material="color: #d8f3ff; emissive: #b1edff; emissiveIntensity: 0.2; opacity: 0.18; transparent: true"
-        ></a-entity>
 
         <a-box
           position="0 2.45 -7.6"
@@ -438,16 +532,6 @@
           material="color: #84ddff; emissive: #6ed8ff; emissiveIntensity: 0.48; opacity: 0.44; transparent: true"
         ></a-entity>
 
-        <a-entity
-          class="portal-rim"
-          geometry="primitive: torus; radius: 1.42; radiusTubular: 0.016"
-          position="0 0 0.14"
-          scale="0.78 1.38 0.78"
-          rotation="0 0 90"
-          material="color: #d1f3ff; emissive: #b3ebff; emissiveIntensity: 0.24; opacity: 0.2; transparent: true"
-          animation="property: rotation; to: 0 0 450; dur: 22000; loop: true; easing: linear"
-        ></a-entity>
-
         <a-plane
           class="portal-core"
           width="1.42"
@@ -472,25 +556,6 @@
           position="0 0 0.11"
           material="src: #portalMuseumImage; shader: flat; transparent: true; opacity: 0.22"
         ></a-plane>
-
-        <a-entity position="0 0 0.16">
-          <a-ring
-            class="portal-rim"
-            radius-inner="0.46"
-            radius-outer="0.54"
-            color="#9ce6ff"
-            material="transparent: true; opacity: 0.28; emissive: #7adfff; emissiveIntensity: 0.42"
-            animation="property: scale; from: 0.74 1.02 1; to: 1.08 1.24 1; dur: 3200; easing: easeOutQuad; loop: true"
-          ></a-ring>
-          <a-ring
-            class="portal-rim"
-            radius-inner="0.46"
-            radius-outer="0.54"
-            color="#9ce6ff"
-            material="transparent: true; opacity: 0.22; emissive: #7adfff; emissiveIntensity: 0.34"
-            animation="property: scale; from: 0.74 1.02 1; to: 1.08 1.24 1; dur: 3200; easing: easeOutQuad; delay: 1400; loop: true"
-          ></a-ring>
-        </a-entity>
 
         <a-plane
           class="portal-hitbox clickable"
@@ -565,16 +630,6 @@
           material="color: #b0c4ff; emissive: #90a8ff; emissiveIntensity: 0.48; opacity: 0.44; transparent: true"
         ></a-entity>
 
-        <a-entity
-          class="portal-rim"
-          geometry="primitive: torus; radius: 1.42; radiusTubular: 0.016"
-          position="0 0 0.14"
-          scale="0.78 1.38 0.78"
-          rotation="0 0 90"
-          material="color: #e2ecff; emissive: #b7c6ff; emissiveIntensity: 0.24; opacity: 0.18; transparent: true"
-          animation="property: rotation; to: 0 0 450; dur: 24000; loop: true; easing: linear"
-        ></a-entity>
-
         <a-plane
           class="portal-core"
           width="1.42"
@@ -599,25 +654,6 @@
           position="0 0 0.11"
           material="src: #portalResumeImage; shader: flat; transparent: true; opacity: 0.22"
         ></a-plane>
-
-        <a-entity position="0 0 0.16">
-          <a-ring
-            class="portal-rim"
-            radius-inner="0.46"
-            radius-outer="0.54"
-            color="#c8d6ff"
-            material="transparent: true; opacity: 0.26; emissive: #a3b5ff; emissiveIntensity: 0.4"
-            animation="property: scale; from: 0.74 1.02 1; to: 1.08 1.24 1; dur: 3400; easing: easeOutQuad; loop: true"
-          ></a-ring>
-          <a-ring
-            class="portal-rim"
-            radius-inner="0.46"
-            radius-outer="0.54"
-            color="#c8d6ff"
-            material="transparent: true; opacity: 0.22; emissive: #a3b5ff; emissiveIntensity: 0.32"
-            animation="property: scale; from: 0.74 1.02 1; to: 1.08 1.24 1; dur: 3400; easing: easeOutQuad; delay: 1500; loop: true"
-          ></a-ring>
-        </a-entity>
 
         <a-plane
           class="portal-hitbox clickable"
@@ -651,7 +687,7 @@
 
         <a-text
           class="portal-caption"
-          value="Rotating section observatory"
+          value="Resume sections archive"
           position="0 -2.42 0.16"
           align="center"
           color="#b9d8f1"

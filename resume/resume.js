@@ -3,6 +3,66 @@ const FONT_URL =
 const FONT_IMAGE =
   "https://raw.githubusercontent.com/etiennepinchon/aframe-fonts/master/fonts/cormorantgaramond/CormorantGaramond-Regular.png";
 
+let uiAudioCtx = null;
+
+function getUiAudioContext() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) {
+    return null;
+  }
+  if (!uiAudioCtx) {
+    uiAudioCtx = new AudioCtx();
+  }
+  return uiAudioCtx;
+}
+
+function playUiSound(kind) {
+  const ctx = getUiAudioContext();
+  if (!ctx) {
+    return;
+  }
+  if (ctx.state === "suspended") {
+    ctx.resume().catch(() => {});
+  }
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+    let freq;
+    let duration;
+    if (kind === "hover") {
+      osc.type = "sine";
+      freq = 720;
+      duration = 0.1;
+    } else {
+      osc.type = "triangle";
+      freq = kind === "carousel" ? 400 : 340;
+      duration = 0.22;
+    }
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.09, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+document.body.addEventListener(
+  "click",
+  () => {
+    const ctx = getUiAudioContext();
+    if (ctx && ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
+  },
+  { once: true },
+);
+
 const resumeWorld = document.getElementById("resumeWorld");
 const sectionIndicator = document.getElementById("sectionIndicator");
 const panelKicker = document.getElementById("panelKicker");
@@ -18,16 +78,16 @@ const sections = [
   { id: "entrance", label: "Arrival", angle: 0 },
   { id: "experience", label: "Experience", angle: 72 },
   { id: "skills", label: "Skills", angle: 144 },
-  { id: "projects", label: "Projects", angle: 216 },
-  { id: "education", label: "Education", angle: 288 },
+  { id: "education", label: "Education", angle: 216 },
+  { id: "contacts", label: "Contacts", angle: 288 },
 ];
 
 const accentBySection = {
   entrance: { accent: "#7adfff", edge: "#c7efff" },
   experience: { accent: "#7adfff", edge: "#c7efff" },
   skills: { accent: "#95a7ff", edge: "#c8d6ff" },
-  projects: { accent: "#c7efff", edge: "#e3f6ff" },
   education: { accent: "#95a7ff", edge: "#c8d6ff" },
+  contacts: { accent: "#95a7ff", edge: "#c8d6ff" },
 };
 
 let resumeData = null;
@@ -120,15 +180,14 @@ function addEnvironment() {
   );
 
   resumeWorld.appendChild(
-    createElement("a-entity", {
-      geometry: "primitive: torus; radius: 2.28; radiusTubular: 0.05",
+    createElement("a-ring", {
       position: "0 2.64 -1.1",
-      scale: "1 1.26 1",
-      rotation: "0 0 90",
+      rotation: "-90 0 0",
+      "radius-inner": "1.95",
+      "radius-outer": "2.14",
+      color: "#9de7ff",
       material:
-        "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.4; opacity: 0.3; transparent: true",
-      animation:
-        "property: rotation; to: 0 0 450; dur: 25000; loop: true; easing: linear",
+        "transparent: true; opacity: 0.3; emissive: #7adfff; emissiveIntensity: 0.38",
     }),
   );
 
@@ -160,13 +219,14 @@ function addHomePortal() {
     rotation: "0 24 0",
   });
 
-  const ring = createElement("a-entity", {
-    geometry: "primitive: torus; radius: 0.72; radiusTubular: 0.04",
+  const ring = createElement("a-ring", {
     position: "0 0 0.12",
-    scale: "0.82 1.24 0.82",
-    rotation: "0 0 90",
+    rotation: "-90 0 0",
+    "radius-inner": "0.52",
+    "radius-outer": "0.72",
+    color: "#c7efff",
     material:
-      "color: #c7efff; emissive: #7adfff; emissiveIntensity: 0.44; opacity: 0.42; transparent: true",
+      "transparent: true; opacity: 0.42; emissive: #7adfff; emissiveIntensity: 0.44",
   });
   portal.appendChild(ring);
 
@@ -177,7 +237,7 @@ function addHomePortal() {
       height: "1.46",
       color: "#06111d",
       material:
-        "transparent: true; opacity: 0.68; emissive: #15324f; emissiveIntensity: 0.28",
+        "transparent: true; opacity: 0.68; emissive: #ba0c2f; emissiveIntensity: 0.28",
     }),
   );
 
@@ -211,6 +271,7 @@ function addHomePortal() {
   );
 
   hitbox.addEventListener("mouseenter", () => {
+    playUiSound("hover");
     portal.setAttribute(
       "animation__hover",
       "property: scale; to: 1.05 1.05 1.05; dur: 220; easing: easeInOutCubic",
@@ -271,6 +332,7 @@ function createSelectorNode(section, index) {
   });
 
   hitbox.addEventListener("mouseenter", () => {
+    playUiSound("hover");
     selector.setAttribute(
       "animation__hover",
       "property: scale; to: 1.08 1.08 1.08; dur: 180; easing: easeInOutCubic",
@@ -326,12 +388,16 @@ function createSectionTitle(anchor, title, subtitle) {
 
 function buildEntranceSection() {
   const anchor = createSectionWrapper(sections[0]);
-  createSectionTitle(anchor, "Arrival", "A professional overview staged as a calm focal monument");
+  createSectionTitle(
+    anchor,
+    "Arrival",
+    "A professional overview staged as a calm focal monument",
+  );
 
   anchor.appendChild(
     createElement("a-box", {
       position: "0 2.36 -0.28",
-      width: "4.8",
+      width: "5.5",
       height: "4.4",
       depth: "0.22",
       color: "#050d16",
@@ -341,15 +407,14 @@ function buildEntranceSection() {
   );
 
   anchor.appendChild(
-    createElement("a-entity", {
-      geometry: "primitive: torus; radius: 1.64; radiusTubular: 0.036",
+    createElement("a-ring", {
       position: "0 2.52 -0.08",
-      rotation: "0 0 90",
-      scale: "1 1.28 1",
+      rotation: "-90 0 0",
+      "radius-inner": "1.38",
+      "radius-outer": "1.58",
+      color: "#9de7ff",
       material:
-        "color: #9de7ff; emissive: #7adfff; emissiveIntensity: 0.42; opacity: 0.3; transparent: true",
-      animation:
-        "property: rotation; to: 0 0 450; dur: 24000; loop: true; easing: linear",
+        "transparent: true; opacity: 0.32; emissive: #7adfff; emissiveIntensity: 0.4",
     }),
   );
 
@@ -366,16 +431,6 @@ function buildEntranceSection() {
 
   anchor.appendChild(
     createText({
-      value: resumeData.professional.title,
-      position: "0 2.82 0.06",
-      align: "center",
-      color: "#7adfff",
-      width: "4.4",
-    }),
-  );
-
-  anchor.appendChild(
-    createText({
       value: resumeData.professional.summary,
       position: "0 1.98 0.08",
       align: "center",
@@ -384,33 +439,28 @@ function buildEntranceSection() {
       wrapCount: "40",
     }),
   );
-
-  anchor.appendChild(
-    createText({
-      value: resumeData.professional.location,
-      position: "0 1.02 0.1",
-      align: "center",
-      color: "#95a7ff",
-      width: "1.9",
-    }),
-  );
 }
 
 function buildExperienceSection() {
   const anchor = createSectionWrapper(sections[1]);
-  createSectionTitle(anchor, "Experience", "Three anchored role stations aligned for a fixed viewer");
+  createSectionTitle(
+    anchor,
+    "Experience",
+    "Three anchored role stations aligned for a fixed viewer",
+  );
 
-  const xPositions = [-3.5, 0, 3.5];
-  resumeData.experience.slice(0, 3).forEach((item, index) => {
-    const accent = index === 2 ? "#95a7ff" : index === 1 ? "#c7efff" : "#7adfff";
+  const xPositions = [-2.5, 0, 2.5];
+  resumeData.experience.forEach((item, index) => {
+    const accent =
+      index === 2 ? "#95a7ff" : index === 1 ? "#c7efff" : "#7adfff";
     const card = createElement("a-entity", {
       position: `${xPositions[index]} 0 0`,
     });
 
     card.appendChild(
       createElement("a-box", {
-        position: "0 2.08 -0.2",
-        width: "2.2",
+        position: "0 2.4 -0.2",
+        width: "2.4",
         height: "3.3",
         depth: "0.18",
         color: "#050d16",
@@ -420,12 +470,13 @@ function buildExperienceSection() {
     );
 
     card.appendChild(
-      createElement("a-entity", {
-        geometry: "primitive: torus; radius: 0.94; radiusTubular: 0.026",
+      createElement("a-ring", {
         position: "0 2.16 -0.06",
-        rotation: "0 0 90",
-        scale: "1 1.24 1",
-        material: `color: ${accent}; emissive: ${accent}; emissiveIntensity: 0.34; opacity: 0.28; transparent: true`,
+        rotation: "-90 0 0",
+        "radius-inner": "0.78",
+        "radius-outer": "0.96",
+        color: accent,
+        material: `transparent: true; opacity: 0.3; emissive: ${accent}; emissiveIntensity: 0.36`,
       }),
     );
 
@@ -435,7 +486,7 @@ function buildExperienceSection() {
         position: "0 3.02 0.04",
         align: "center",
         color: "#ecf6ff",
-        width: "2.9",
+        width: "2",
       }),
     );
 
@@ -476,7 +527,11 @@ function buildExperienceSection() {
 
 function buildSkillsSection() {
   const anchor = createSectionWrapper(sections[2]);
-  createSectionTitle(anchor, "Skills", "A constellation of capability clusters around a central core");
+  createSectionTitle(
+    anchor,
+    "Skills",
+    "A constellation of capability clusters around a central core",
+  );
 
   anchor.appendChild(
     createElement("a-sphere", {
@@ -555,114 +610,13 @@ function buildSkillsSection() {
   });
 }
 
-function buildProjectsSection() {
-  const anchor = createSectionWrapper(sections[3]);
-  createSectionTitle(anchor, "Projects", "Text-first project capsules reduce buffering inside the scene");
-
-  const positions = [
-    { x: -3.2, y: 3.0 },
-    { x: 3.2, y: 3.0 },
-    { x: -3.2, y: 1.2 },
-    { x: 3.2, y: 1.2 },
-  ];
-
-  resumeData.projects.slice(0, 4).forEach((project, index) => {
-    const pos = positions[index];
-    const accent = index % 2 === 0 ? "#7adfff" : "#95a7ff";
-    const card = createElement("a-entity", {
-      position: `${pos.x} ${pos.y} 0`,
-    });
-
-    card.appendChild(
-      createElement("a-box", {
-        position: "0 0 0",
-        width: "2.5",
-        height: "1.8",
-        depth: "0.16",
-        color: "#050d16",
-        material:
-          "opacity: 0.56; transparent: true; emissive: #071829; emissiveIntensity: 0.16",
-      }),
-    );
-
-    const veil = createElement("a-plane", {
-      position: "0 0 0.08",
-      width: "2.16",
-      height: "1.42",
-      color: accent,
-      material: `opacity: 0.08; transparent: true; emissive: ${accent}; emissiveIntensity: 0.28`,
-    });
-    card.appendChild(veil);
-
-    card.appendChild(
-      createText({
-        value: project.name,
-        position: "0 0.44 0.08",
-        align: "center",
-        color: "#ecf6ff",
-        width: "2.8",
-      }),
-    );
-
-    card.appendChild(
-      createText({
-        value: project.description,
-        position: "0 -0.04 0.08",
-        align: "center",
-        color: "#a9c9df",
-        width: "2.2",
-        wrapCount: "28",
-      }),
-    );
-
-    card.appendChild(
-      createText({
-        value: project.technologies.slice(0, 3).join(" / "),
-        position: "0 -0.62 0.08",
-        align: "center",
-        color: accent,
-        width: "2.1",
-      }),
-    );
-
-    const hitbox = createElement("a-plane", {
-      class: "clickable",
-      position: "0 0 0.1",
-      width: "2.16",
-      height: "1.42",
-      material: "transparent: true; opacity: 0.001",
-    });
-    card.appendChild(hitbox);
-
-    hitbox.addEventListener("mouseenter", () => {
-      card.setAttribute(
-        "animation__hover",
-        "property: scale; to: 1.03 1.03 1.03; dur: 220; easing: easeInOutCubic",
-      );
-      veil.setAttribute("material", "opacity", 0.18);
-    });
-
-    hitbox.addEventListener("mouseleave", () => {
-      card.setAttribute(
-        "animation__hover",
-        "property: scale; to: 1 1 1; dur: 220; easing: easeInOutCubic",
-      );
-      veil.setAttribute("material", "opacity", 0.08);
-    });
-
-    hitbox.addEventListener("click", () => {
-      if (project.link && project.link !== "#") {
-        window.open(project.link, "_blank", "noopener,noreferrer");
-      }
-    });
-
-    anchor.appendChild(card);
-  });
-}
-
 function buildEducationSection() {
-  const anchor = createSectionWrapper(sections[4]);
-  createSectionTitle(anchor, "Education", "Academic milestones and scholarship support in a quieter finale");
+  const anchor = createSectionWrapper(sections[3]);
+  createSectionTitle(
+    anchor,
+    "Education",
+    "Academic milestones and scholarship support in a quieter finale",
+  );
 
   const education = resumeData.education[0] || {
     institution: "Education data unavailable",
@@ -691,13 +645,14 @@ function buildEducationSection() {
   );
 
   anchor.appendChild(
-    createElement("a-entity", {
-      geometry: "primitive: torus; radius: 1.44; radiusTubular: 0.03",
+    createElement("a-ring", {
       position: "0 2.56 -0.08",
-      rotation: "0 0 90",
-      scale: "1 1.28 1",
+      rotation: "-90 0 0",
+      "radius-inner": "1.22",
+      "radius-outer": "1.42",
+      color: "#c8d6ff",
       material:
-        "color: #c8d6ff; emissive: #95a7ff; emissiveIntensity: 0.36; opacity: 0.28; transparent: true",
+        "transparent: true; opacity: 0.3; emissive: #95a7ff; emissiveIntensity: 0.36",
     }),
   );
 
@@ -741,16 +696,103 @@ function buildEducationSection() {
       wrapCount: "38",
     }),
   );
+}
+
+function buildContactsSection() {
+  const anchor = createSectionWrapper(sections[4]);
+  createSectionTitle(anchor, "Contacts", "Reach out through any channel");
+
+  const contacts = resumeData.contact || [];
+  const accent = accentBySection.contacts?.accent || "#95a7ff";
+  const edge = accentBySection.contacts?.edge || "#c8d6ff";
 
   anchor.appendChild(
-    createText({
-      value: `${certification.name} / ${certification.date}`,
-      position: "0 0.72 0.08",
-      align: "center",
-      color: "#c8d6ff",
-      width: "3.2",
+    createElement("a-box", {
+      position: "0 2.05 -0.24",
+      width: "5.2",
+      height: "3.8",
+      depth: "0.18",
+      color: "#050d16",
+      material:
+        "opacity: 0.56; transparent: true; emissive: #071829; emissiveIntensity: 0.16",
     }),
   );
+
+  if (contacts.length === 0) {
+    anchor.appendChild(
+      createText({
+        value: "No contact data available.",
+        position: "0 2.05 0.1",
+        align: "center",
+        color: "#a9c9df",
+        width: "4.4",
+        wrapCount: "26",
+      }),
+    );
+    return;
+  }
+
+  const maxItems = Math.min(contacts.length, 3);
+
+  for (let idx = 0; idx < maxItems; idx++) {
+    const c = contacts[idx];
+    const y = 2.55 - idx * 0.78;
+
+    // Card base (rendered slightly “below” the texts)
+    const cardBox = createElement("a-box", {
+      position: `0 ${y - 1.7} 0`,
+      width: "4.9",
+      height: "0.72",
+      depth: "0.14",
+      color: "#050d16",
+      material: `opacity: 0.44; transparent: true; emissive: ${accent}; emissiveIntensity: 0.16`,
+    });
+
+    const card = createElement("a-entity", { position: "0 0 0" });
+    card.appendChild(cardBox);
+
+    const hitbox = createElement("a-plane", {
+      class: "clickable",
+      position: `0 ${y - 1.7} 0.08`,
+      width: "4.9",
+      height: "0.98",
+      material: "transparent: true; opacity: 0.001",
+    });
+
+    hitbox.addEventListener("mouseenter", () => {
+      playUiSound("hover");
+      cardBox.setAttribute(
+        "material",
+        `opacity: 0.62; transparent: true; emissive: ${accent}; emissiveIntensity: 0.22`,
+      );
+    });
+    hitbox.addEventListener("mouseleave", () => {
+      cardBox.setAttribute(
+        "material",
+        `opacity: 0.44; transparent: true; emissive: ${accent}; emissiveIntensity: 0.16`,
+      );
+    });
+    hitbox.addEventListener("click", () => {
+      if (c.href) {
+        window.open(c.href, "_blank", "noopener,noreferrer");
+      }
+    });
+
+    card.appendChild(hitbox);
+
+    card.appendChild(
+      createText({
+        value: c.value,
+        position: `0 ${y} 0.12`,
+        align: "center",
+        color: "#a9c9df",
+        width: "4.3",
+        wrapCount: "24",
+      }),
+    );
+
+    anchor.appendChild(card);
+  }
 }
 
 function buildDetailsMarkup(sectionId) {
@@ -804,32 +846,6 @@ function buildDetailsMarkup(sectionId) {
     `;
   }
 
-  if (sectionId === "projects") {
-    return `
-      <div class="detail-section">
-        <h3>Selected Projects</h3>
-        ${resumeData.projects
-          .slice(0, 4)
-          .map(
-            (project) => `
-              <article class="detail-block">
-                <h4>${project.name}</h4>
-                <div class="detail-meta">${project.category}</div>
-                <p>${project.description}</p>
-                <ul class="detail-list">
-                  ${project.achievements
-                    .map((achievement) => `<li>${achievement}</li>`)
-                    .join("")}
-                </ul>
-                ${badgeRow(project.technologies)}
-              </article>
-            `,
-          )
-          .join("")}
-      </div>
-    `;
-  }
-
   if (sectionId === "education") {
     const education = resumeData.education[0] || {
       institution: "Education data unavailable",
@@ -859,6 +875,27 @@ function buildDetailsMarkup(sectionId) {
           <h4>${certification.name}</h4>
           <div class="detail-meta">${certification.issuer} / ${certification.date}</div>
           <p>${certification.description}</p>
+        </article>
+      </div>
+    `;
+  }
+
+  if (sectionId === "contacts") {
+    const contacts = resumeData.contact || [];
+    return `
+      <div class="detail-section">
+        <h3>My Contacts</h3>
+        <article class="detail-block">
+          <h4>Get in touch</h4>
+          <ul class="detail-list">
+            ${contacts
+              .slice(0, 6)
+              .map(
+                (c) =>
+                  `<li><span style="color: var(--accent-cyan)">${c.label}:</span> <a href="${c.href}" target="_blank" rel="noreferrer noopener">${c.value}</a></li>`,
+              )
+              .join("")}
+          </ul>
         </article>
       </div>
     `;
@@ -900,36 +937,34 @@ function updateUI(sectionId) {
       kicker: "Arrival",
       title: "Professional Summary",
       content:
-        "The opening monument now sits in a rotating archive, so the viewer stays centered while the content moves.",
+        "Opening overview: you stay centered while each section turns into view.",
       indicator: "Arrival",
     },
     experience: {
       kicker: "Career",
       title: "Experience Stations",
       content:
-        "Roles now arrive in front of the user as a carousel panel instead of forcing locomotion between sections.",
+        "Roles appear as panels in front of you—no walking between stations.",
       indicator: "Experience",
     },
     skills: {
       kicker: "Capabilities",
       title: "Skill Constellation",
       content:
-        "Capabilities cluster around a central core, using motion and hierarchy without adding scene noise.",
+        "Capabilities cluster around a central core with clear hierarchy.",
       indicator: "Skills",
-    },
-    projects: {
-      kicker: "Selected Work",
-      title: "Project Capsules",
-      content:
-        "Project panels use text-first holographic cards to cut buffering from remote in-scene images.",
-      indicator: "Projects",
     },
     education: {
       kicker: "Foundation",
       title: "Education and Recognition",
-      content:
-        "Education closes the carousel with a quieter ceremonial station and a clear in-place finish.",
+      content: "Education and recognition in a calmer closing section.",
       indicator: "Education",
+    },
+    contacts: {
+      kicker: "Connect",
+      title: "My Contacts",
+      content: "Email and links to connect with me.",
+      indicator: "Contacts",
     },
   };
 
@@ -953,6 +988,9 @@ function transitionToSection(sectionId) {
     return;
   }
 
+  if (nextIndex !== currentSectionIndex) {
+    playUiSound("carousel");
+  }
   currentSectionIndex = nextIndex;
   carouselRoot.setAttribute(
     "animation__spin",
@@ -967,17 +1005,27 @@ function nextSection() {
 }
 
 function previousSection() {
-  const nextIndex = (currentSectionIndex - 1 + sections.length) % sections.length;
+  const nextIndex =
+    (currentSectionIndex - 1 + sections.length) % sections.length;
   transitionToSection(sections[nextIndex].id);
 }
 
 function setupNavigation() {
   navButtons.forEach((button) => {
+    button.addEventListener("mouseenter", () => {
+      playUiSound("hover");
+    });
     button.addEventListener("click", () => {
       transitionToSection(button.dataset.section);
     });
   });
 
+  prevButton.addEventListener("mouseenter", () => {
+    playUiSound("hover");
+  });
+  nextButton.addEventListener("mouseenter", () => {
+    playUiSound("hover");
+  });
   prevButton.addEventListener("click", previousSection);
   nextButton.addEventListener("click", nextSection);
 
@@ -1005,8 +1053,8 @@ function buildScene() {
   buildEntranceSection();
   buildExperienceSection();
   buildSkillsSection();
-  buildProjectsSection();
   buildEducationSection();
+  buildContactsSection();
 }
 
 async function initializeResume() {
@@ -1032,11 +1080,12 @@ async function initializeResume() {
       experience: [],
       education: [],
       skills: {},
-      projects: [],
+      contact: [],
       certifications: [],
       about: {
         journey: "Resume data could not be loaded.",
-        philosophy: "Serve the project over HTTP to restore the full experience.",
+        philosophy:
+          "Serve the project over HTTP to restore the full experience.",
         interests: ["Web Development", "Immersive UI"],
       },
     };

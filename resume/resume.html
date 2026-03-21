@@ -6,13 +6,15 @@
     <title>Resume Archive</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <link rel="stylesheet" href="resume.css" />
+    <link rel="preload" href="../assets/audio/ambient/space1.mp3" as="audio" />
+    <link rel="preload" href="../assets/audio/ambient/dayOne.mp3" as="audio" />
   </head>
   <body>
     <div id="bootScreen" class="boot-screen">
       <div class="boot-panel">
         <span class="eyebrow">Stationary Resume Mode</span>
-        <h1>Preparing The Carousel</h1>
-        <p>Loading a rotating archive built for seated and standing users.</p>
+        <h1>Preparing The Archive</h1>
+        <p>Loading resume sections for seated and standing viewing.</p>
       </div>
     </div>
 
@@ -22,9 +24,8 @@
           <span class="eyebrow">Professional Archive</span>
           <h1>Resume Observatory</h1>
           <p>
-            The resume is now arranged as a stationary carousel. Rotate in place
-            or use the section controls to bring each archive node in front of
-            you.
+            Stationary layout: rotate in place or use the controls to move
+            between sections.
           </p>
         </div>
 
@@ -56,8 +57,8 @@
           </button>
           <button class="nav-chip" data-section="experience">Experience</button>
           <button class="nav-chip" data-section="skills">Skills</button>
-          <button class="nav-chip" data-section="projects">Projects</button>
           <button class="nav-chip" data-section="education">Education</button>
+          <button class="nav-chip" data-section="contacts">Contacts</button>
         </div>
       </aside>
 
@@ -79,9 +80,35 @@
     >
       <a-assets>
         <img id="resumeSky" src="../assets/images/sky.jpeg" alt="" />
+        <audio
+          id="ambientSpaceLeft"
+          class="scene-ambient-audio"
+          src="../assets/audio/ambient/space1.mp3"
+          preload="auto"
+          loop
+          crossorigin="anonymous"
+        ></audio>
+        <audio
+          id="ambientDayRight"
+          class="scene-ambient-audio"
+          src="../assets/audio/ambient/dayOne.mp3"
+          preload="auto"
+          loop
+          crossorigin="anonymous"
+        ></audio>
       </a-assets>
 
       <a-sky src="#resumeSky" rotation="0 -90 0"></a-sky>
+
+      <!-- Same spatial stereo bed as index (no voiceover) -->
+      <a-entity
+        position="-2.6 1.6 0.2"
+        sound="src: #ambientSpaceLeft; autoplay: true; loop: true; volume: 0.05; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
+      <a-entity
+        position="2.6 1.6 0.2"
+        sound="src: #ambientDayRight; autoplay: true; loop: true; volume: 0.10; positional: true; refDistance: 0.85; rolloffFactor: 0.75; distanceModel: inverse"
+      ></a-entity>
       <a-entity id="resumeWorld"></a-entity>
 
       <a-entity id="rig" position="0 0 0">
@@ -109,5 +136,14 @@
     </a-scene>
 
     <script src="resume.js"></script>
+    <script>
+      document.querySelectorAll(".ghost-link").forEach((el) => {
+        el.addEventListener("mouseenter", () => {
+          if (typeof playUiSound === "function") {
+            playUiSound("hover");
+          }
+        });
+      });
+    </script>
   </body>
 </html>
